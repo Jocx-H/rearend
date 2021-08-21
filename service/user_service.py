@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# 服务层当中,服务是不能命名为数据库的操作名字
+# 内嵌于有效键里面的服务
 
 from fastapi.responses import JSONResponse
 from dao import user_dao
-
 
 def get_user_infos(uname):
     r'''

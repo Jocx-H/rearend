@@ -211,9 +211,11 @@ dict_1 = {
 
 ## 接口设计
 
+数据库里面的数据自诞生起位置在数据库中就是固定的。若要对数据进行排序等操作，必须先将满足条件的数据取到后端，再进行操作。
+
 ### 控制层
 
-数据库里面的数据自诞生起位置在数据库中就是固定的。若要对数据进行排序等操作，必须先将满足条件的数据取到后端，再进行操作。
+控制层重在与前端进行连接和交互。
 
 * 增：
 
@@ -232,7 +234,7 @@ dict_1 = {
   接收前端的信号，删除特定数据库中的某个特定数据
 
   ```python
-  def remove(d_name: str, **kargs)
+  def remove(d_name: str, **kwargs)
   ```
 
   说明：
@@ -240,13 +242,13 @@ dict_1 = {
   1. `d_name`：数据库的名字
   2. `kargs`：可选参数字典，但是二者必须有其一，里面包括的有效键为：
      * `doc: str`：需要删除数据的键
-     * `where: bool`：删除满足该判别式的数据
+     * `where: str`：删除满足该判别式的数据
 
 * 改：
   根据前端的数据更改数据库
 
   ```python
-  def updata(d_name: str, doc: str, data: dict)
+  def update(d_name: str, doc: str, data: dict)
   ```
 
   说明：
@@ -259,7 +261,7 @@ dict_1 = {
   获取数据
 
   ```python
-  def get(d_name: str, **kargs)
+  def get(d_name: str, **kwargs)
   ```
 
   说明：
@@ -273,9 +275,87 @@ dict_1 = {
 
 ### 服务层
 
+* 限制返回数据数limit
+
+  ```python
+  def limit(restrict: int, data: list)
+  ```
+
+  1. `restrict`：返回前端数据的条数
+  2. `data`：获得的数据列表
+  
+* 跳过数据库的前若干数据skip
+
+  ```python
+  def skip(num: int, data: list)
+  ```
+
+  1. `num`：跳过的数据条数
+  2. `data`：获得的数据列表
+
+* 人脸识别
+
+  ```python
+  def face(img: list, data: list)
+  ```
+
+  1. `img`：从前端传过来的图像数据（姑且认为它是二进制列表）
+  2. `data`：从数据库中取出来的多张人脸图片，用于一一对比
+
+以下函数和控制层接口基本相同，但是重在处理逻辑。
+
+* 增添数据服务
+
+  ```python
+  def add_service(d_name: str, data: dict) -> bool
+  ```
+
+* 删数据服务：
+  接收前端的信号，删除特定数据库中的某个特定数据
+
+  ```python
+  def remove_service(d_name: str, **kwargs) -> bool
+  ```
+
+  说明：
+
+  1. `d_name`：数据库的名字
+  2. `kargs`：可选参数字典，但是二者必须有其一，里面包括的有效键为：
+     * `doc: str`：需要删除数据的键
+     * `where: str`：删除满足该判别式的数据
+
+* 改数据服务：
+  根据前端的数据更改数据库
+
+  ```python
+  def update_service(d_name: str, doc: str, data: dict) -> bool
+  ```
+
+  说明：
+
+  1. `d_name`：数据库的名字
+  2. `doc`：需要删除数据的键
+  3. `data`：需要更新的数据
+
+* 查数据服务：
+  获取数据
+
+  ```python
+  def get_service(d_name: str, **kwargs) -> list
+  ```
+
+  说明：
+
+  1. `d_name`：数据库名字
+  2. `kargs`：可选参数字典，里面的有效键值为：
+     * `doc: str`：数据的键
+     * `where: bool`：获得满足该判别式的数据
+     * `limit: int`：返回前端的数据条目，最多为20条
+     * `skip: int`：跳过多少条数据库中的数据
+
 ### 数据层
 
-数据层利用PyMySQL包直接于数据库进行交互
+数据层利用PyMySQL包直接于数据库进行交互。
 
 * 增
 
@@ -300,7 +380,7 @@ dict_1 = {
 * 删——通过条件
 
   ```python
-  def delete_to_db(d_name: str, where: bool) -> bool
+  def delete_to_db(d_name: str, where: str) -> bool
   ```
 
   1. `d_name`：数据库名字
@@ -310,7 +390,7 @@ dict_1 = {
 * 改
 
   ```python
-  def updata_to_db(d_name: str, doc: str, data: dict) -> bool
+  def update_to_db(d_name: str, doc: str, data: dict) -> bool
   ```
 
   1. `d_name`：数据库名字
@@ -331,10 +411,34 @@ dict_1 = {
 * 查——通过条件
 
   ```python
-  def get_from_db(d_name: str, where: bool) -> list
+  def get_from_db(d_name: str, where: str) -> list
   ```
 
   1. `d_name`：数据库名字
   2. `where`：所查数据所满足的判别式
   3. 返回值：多条数据
 
+## 异常处理
+
+### 控制层
+
+* 处理与前端的连接异常
+* 处理“收到服务失败”信号的异常
+
+### 服务层
+
+* 处理参数的合法性
+  * 请求服务的"键"是否有效
+* 所请求服务的合法性
+  * `pass`参数的合法性
+  * `limit`参数的合法性
+  * 人脸图片的合法性
+* 处理“获得数据失败”信号的异常
+
+### 数据层
+
+* 处理参数的合法性
+  * `data`是否与数据库数据表单相符，以免出现对数据库的非法操作
+  * 数据库的名字是否正确
+  * `doc`所代表的键值是否存在
+* 处理与数据库的连接异常

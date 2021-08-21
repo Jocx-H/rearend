@@ -8,8 +8,8 @@ import pymysql
 
 
 def select_users(uname: str) -> dict:
-    r'''
-    '''
+    r"""
+    """
     # 打开数据库连接
     db = pymysql.connect(host="101.34.48.210", user="root",
                          password="Wangweijie123", database="wwj")
@@ -21,9 +21,9 @@ def select_users(uname: str) -> dict:
         # 执行sql语句
         cursor.execute(sql)
         data = cursor.fetchall()
-    # 把查询的数据填充到person对象是否可以(要循环这个游标进行数据的填充)
-    # 可以将查询的数据填充(组合)到自定义的模型中
-    # 提交到数据库执行
+        # 把查询的数据填充到person对象是否可以(要循环这个游标进行数据的填充)
+        # 可以将查询的数据填充(组合)到自定义的模型中
+        # 提交到数据库执行
         db.commit()
     except:
         # 如果发生错误则回滚
