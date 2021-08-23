@@ -30,7 +30,7 @@ app.add_middleware(
 
 
 # 注册api模块
-app.include_router(user.router, prefix="/api")
+app.include_router(user.router)
 
 # 配置容器启动相应的实例
 if __name__ == '__main__':

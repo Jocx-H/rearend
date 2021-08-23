@@ -34,7 +34,8 @@ def get_data(d_name: str, **kwargs):
 
     # 进行子服务
     data = skip(kwargs['skip'], data) if kwargs['skip'] is not None else data
-    data = limit(kwargs['limit'], data) if kwargs['limit'] is not None else data
+    data = limit(kwargs['limit'],
+                 data) if kwargs['limit'] is not None else data
 
     return JSONResponse(data)
 
