@@ -51,7 +51,7 @@ uvicorn                   0.15.0                   pypi_0    pypi
 ```python
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# 描述w
+# 描述
 ```
 
 下面两点的语法可参考：https://docs.python.org/zh-cn/3/library/typing.html
@@ -68,7 +68,7 @@ def hah(): -> bool
 - 函数参数需要注明类型
 
 ```python
-def getusers(uname: str):
+def get_users(uname: str):
     return userService.getUserInfos(uname)
 ```
 
