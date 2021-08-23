@@ -19,7 +19,7 @@
 python                    3.7.11               h6244533_0    defaults
 aiofiles                  0.7.0                    pypi_0    pypi
 fastapi                   0.68.0                   pypi_0    pypi
-pymysql                   1.0.2                    pypi_0    pypi
+PyMySQL                   1.0.2                    pypi_0    pypi
 uvicorn                   0.15.0                   pypi_0    pypi
 ```
 
@@ -34,13 +34,13 @@ uvicorn                   0.15.0                   pypi_0    pypi
 - `model`存放自定义类等，即模型层。
 - `img`存放readme中使用到的图片。
 
-### 编码规范
+### 代码规范
 
 - 使用pep8编码规范，vscode的话可以通过在`setting.json`文件中设置`"python.formatting.provider": "autopep8"`从而使默认的格式化文档风格为pep8，**写完代码后保持格式化文档一下的习惯**，下面说的是只靠格式化解决不了的问题。
+- 引入第三方库别用`from ... import *`，用`import`或者要用啥引啥，比如`from PyQt5 import QWidget`，引用自己写的模块视情况而定。尽量不要将所有的内容全引入了，这样会很臃肿。引入内容按照__字典序排列__。
+- 正式内容与引入内容间隔两行，类外函数两两间间隔两行，内类函数两两间间隔一行。
 
-- 引入第三方库别用`from ... import *`，用`import`或者要用啥引啥，比如`from PyQt5 import QWidget`，引用自己写的模块视情况而定。
-
-以下三点均可以在编辑器中设置<img src="img/image-20210820151023689.png" alt="image-20210820151023689" style="zoom:80%;" />，修改可以参考https://www.cxyzjd.com/article/github_38851471/85268075（记得git的也要改，这是为了避免：https://github.com/cssmagic/blog/issues/22）。
+以下几点点均可以在编辑器中设置<img src="img/image-20210820151023689.png" alt="image-20210820151023689" style="zoom:80%;" />，修改可以参考https://www.cxyzjd.com/article/github_38851471/85268075（记得git的也要改，这是为了避免：https://github.com/cssmagic/blog/issues/22）。
 
 - 使用 **4 空格缩进**，禁用任何 TAB 符号（编辑器或者idle可以设置自动将tab转成空格）。
 - 源码文件使用 **UTF-8 无 BOM 编码格式（UTF-8）**。
@@ -54,9 +54,20 @@ uvicorn                   0.15.0                   pypi_0    pypi
 # 描述
 ```
 
+#### 函数规范
+
+- 函数名使用小写单词命名，多个单词之间用下划线连接，保护函数以下划线开头，私有函数以下双下划线开头（继承父类来的比如`paintEvent`来的就没办法了）：
+
+```python
+def demo_function():
+	pass
+def _private_function():
+	pass
+```
+
 下面两点的语法可参考：https://docs.python.org/zh-cn/3/library/typing.html
 
-- 自定义函数要表明返回值类型（接口可以省了反正都是一样的）。
+- 自定义函数要表明返回值类型（接口可以省了反正都是一样的）
 
 ```python
 def heihei(): -> None
@@ -72,11 +83,22 @@ def get_users(uname: str):
     return userService.getUserInfos(uname)
 ```
 
-- 函数接口开始要写**注释**
+- 函数的开头要写功能**注释**，并且给出参数解释，特殊情况下给出__返回值解释__和__示例__
 
 ```python
 def hhh():
     r"""balabala
+    """
+    pass
+
+def hhh2(para_1: str, para_2: int):
+    r"""
+    balabala
+    
+    Args:
+    	para_1(str): balabala
+    				balabala
+	    para_2(int): balabala
     """
     pass
 ```
@@ -91,12 +113,16 @@ pass
 pass # 我是行注释
 ```
 
+#### 文件命名规范
+
 - 文件和文件夹使用**小写单词**命名，多个单词之间用下划线连接：
 
 ```python
 demo_module
 demo_do_something.py
 ```
+
+#### 类命名规范
 
 - 类名：（大驼峰原则）
 
@@ -109,30 +135,63 @@ class _PrivateClass():
 	pass
 ```
 
-- 函数名：
-
-使用小写单词命名，多个单词之间用下划线连接，私有函数以下划线开头（继承父类来的比如`paintEvent`来的就没办法了）：
-
-```python
-def demo_function():
-	pass
-def _private_function():
-	pass
-```
+#### 变量规范
 
 - 变量名：
 
-使用小写单词命名，多个单词之间用下划线连接：
+  使用小写单词命名，多个单词之间用下划线连接：
 
 ```python
 demo_variable = "Hello Python"
 ```
 
 - 常量：
+
   使用大写单词命名，多个单词之间用下划线连接：
 
 ```python
 DEMO_CONSTANT = 100
+```
+
+* 全局变量位置：
+
+  在引入内容下方，正式内容上方。与引入内容间隔一行，与正式内容间隔两行
+
+```python
+from somefile import something
+
+file_path = "balabalabala"
+
+
+def get():
+    pass
+```
+
+* 列表书写格式：
+  仅有单行数值可以在同一行表示，其他均需换行表示
+
+```python
+list_1 = [1, 2, 3, 4]
+
+list_2 = [
+    "sdf", "sdf", "sdf"
+]
+
+list_3 = [
+    [1, 1, 1, 1],
+    [2, 2, 2, 2],
+    [3, 3, 3, 3]
+]
+```
+
+* 字典书写格式：
+  内容均需要换行
+
+```python
+dict_1 = {
+    "key": value,
+    "key_2": value
+}
 ```
 
 ### Github上传规则
@@ -149,4 +208,300 @@ DEMO_CONSTANT = 100
 详见：https://www.liaoxuefeng.com/wiki/896043488029600/900375748016320
 
 如果你不想你的工作被别人的push打扰，可以自己开一个分支，比如`git branch lxh`在上面提交，然后之后再将`lxh`和`main`合并。
+
+## 接口设计
+
+数据库里面的数据自诞生起位置在数据库中就是固定的。若要对数据进行排序等操作，必须先将满足条件的数据取到后端，再进行操作。
+
+### 控制层
+
+控制层重在与前端进行连接和交互。
+
+* 增：
+
+  接收来自前端的数据，添加新的数据对到数据库中
+
+  ```python
+  def add(d_name: str, data: dict)
+  ```
+
+  说明：
+
+  1. `d_name`：数据库的名字
+  2. `data`：需要存储的数据，键值对与数据库表单内容一一对应
+
+* 删：
+  接收前端的信号，删除特定数据库中的某个特定数据
+
+  ```python
+  def remove(d_name: str, **kwargs)
+  ```
+
+  说明：
+
+  1. `d_name`：数据库的名字
+  2. `kargs`：可选参数字典，但是二者必须有其一，里面包括的有效键为：
+     * `doc: str`：需要删除数据的键
+     * `where: str`：删除满足该判别式的数据
+
+* 改：
+  根据前端的数据更改数据库
+
+  ```python
+  def update(d_name: str, doc: str, data: dict)
+  ```
+
+  说明：
+
+  1. `d_name`：数据库的名字
+  2. `doc`：需要删除数据的键
+  3. `data`：需要更新的
+
+* 查：
+  获取数据
+
+  ```python
+  def get(d_name: str, **kwargs)
+  ```
+
+  说明：
+
+  1. `d_name`：数据库名字
+  2. `kargs`：可选参数字典，里面的有效键值为：
+     * `doc: str`：数据的键
+     * `where: bool`：获得满足该判别式的数据
+     * `limit: int`：返回前端的数据条目，最多为20条
+     * `skip: int`：跳过多少条数据库中的数据
+
+### 服务层
+
+提供给服务层的操作
+
+* 增：
+
+  接收来自前端的数据，添加新的数据对到数据库中
+
+  ```python
+  def add(d_name: str, data: dict)
+  ```
+
+  说明：
+
+  1. `d_name`：数据库的名字
+  2. `data`：需要存储的数据，键值对与数据库表单内容一一对应
+
+* 删：
+  接收前端的信号，删除特定数据库中的某个特定数据
+
+  ```python
+  def remove(d_name: str, **kwargs)
+  ```
+
+  说明：
+
+  1. `d_name`：数据库的名字
+  2. `kargs`：可选参数字典，但是二者必须有其一，里面包括的有效键为：
+     * `doc: str`：需要删除数据的键
+     * `where: str`：删除满足该判别式的数据
+
+* 改：
+  根据前端的数据更改数据库
+
+  ```python
+  def update(d_name: str, doc: str, data: dict)
+  ```
+
+  说明：
+
+  1. `d_name`：数据库的名字
+  2. `doc`：需要删除数据的键
+  3. `data`：需要更新的
+
+* 查：
+  获取数据
+
+  ```python
+  def get(d_name: str, **kwargs)
+  ```
+
+  说明：
+
+  1. `d_name`：数据库名字
+  2. `kargs`：可选参数字典，里面的有效键值为：
+     * `doc: str`：数据的键
+     * `where: bool`：获得满足该判别式的数据
+     * `limit: int`：返回前端的数据条目，最多为20条
+     * `skip: int`：跳过多少条数据库中的数据
+
+只处于服务层内部的子操作
+
+* 限制返回数据数limit
+
+  ```python
+  def limit(restrict: int, data: list)
+  ```
+
+  1. `restrict`：返回前端数据的条数
+  2. `data`：获得的数据列表
+  
+* 跳过数据库的前若干数据skip
+
+  ```python
+  def skip(num: int, data: list)
+  ```
+
+  1. `num`：跳过的数据条数
+  2. `data`：获得的数据列表
+
+* 人脸识别
+
+  ```python
+  def face(img: list, data: list)
+  ```
+
+  1. `img`：从前端传过来的图像数据（姑且认为它是二进制列表）
+  2. `data`：从数据库中取出来的多张人脸图片，用于一一对比
+
+以下函数和控制层接口基本相同，但是重在处理逻辑。
+
+* 增添数据服务
+
+  ```python
+  def add_service(d_name: str, data: dict) -> bool
+  ```
+
+* 删数据服务：
+  接收前端的信号，删除特定数据库中的某个特定数据
+
+  ```python
+  def remove_service(d_name: str, **kwargs) -> bool
+  ```
+
+  说明：
+
+  1. `d_name`：数据库的名字
+  2. `kargs`：可选参数字典，但是二者必须有其一，里面包括的有效键为：
+     * `doc: str`：需要删除数据的键
+     * `where: str`：删除满足该判别式的数据
+
+* 改数据服务：
+  根据前端的数据更改数据库
+
+  ```python
+  def update_service(d_name: str, doc: str, data: dict) -> bool
+  ```
+
+  说明：
+
+  1. `d_name`：数据库的名字
+  2. `doc`：需要删除数据的键
+  3. `data`：需要更新的数据
+
+* 查数据服务：
+  获取数据
+
+  ```python
+  def get_service(d_name: str, **kwargs) -> list
+  ```
+
+  说明：
+
+  1. `d_name`：数据库名字
+  2. `kargs`：可选参数字典，里面的有效键值为：
+     * `doc: str`：数据的键
+     * `where: bool`：获得满足该判别式的数据
+     * `limit: int`：返回前端的数据条目，最多为20条
+     * `skip: int`：跳过多少条数据库中的数据
+
+### 数据层
+
+数据层利用PyMySQL包直接于数据库进行交互。
+
+* 增
+
+  ```python
+  def add_to_db(d_name: str, data: dict) -> bool
+  ```
+
+  1. `d_name`：数据库名字
+  2. `data`：需要增加的数据
+  3. 返回值：如果添加成功返回`True`，否则`False`
+
+* 删——通过键
+
+  ```python
+  def delete_to_db(d_name: str, doc: str) -> bool
+  ```
+
+  1. `d_name`：数据库名字
+  2. `doc`：需要删除的数据的识别键
+  3. 返回值：如果删除成功返回`True`，否则`False`
+
+* 删——通过条件
+
+  ```python
+  def delete_to_db(d_name: str, where: str) -> bool
+  ```
+
+  1. `d_name`：数据库名字
+  2. `where`：所删数据所满足的判别式
+  3. 返回值：如果删除成功返回`True`，否则`False`
+
+* 改
+
+  ```python
+  def update_to_db(d_name: str, doc: str, data: dict) -> bool
+  ```
+
+  1. `d_name`：数据库名字
+  2. `doc`：需要修改的数据的识别键
+  3. `data`：需要修改的数据
+  4. 返回值：如果修改成功返回`True`，否则`False`
+
+* 查——通过键
+
+  ```python
+  def get_from_db(d_name: str, doc: str) -> dict
+  ```
+
+  1. `d_name`：数据库名字
+  2. `doc`：需要查找的数据的识别键
+  3. 返回值：获得的数据
+
+* 查——通过条件
+
+  ```python
+  def get_from_db(d_name: str, where: str) -> list
+  ```
+
+  1. `d_name`：数据库名字
+  2. `where`：所查数据所满足的判别式
+  3. 返回值：多条数据
+
+## 异常处理
+
+### 控制层
+
+* 处理与前端的连接异常
+* 处理“收到服务失败”信号的异常
+
+### 服务层
+
+* 处理参数的合法性
+  * 请求服务的"键"是否有效
+* 所请求服务的合法性
+  * `pass`参数的合法性
+  * `limit`参数的合法性
+  * 人脸图片的合法性
+* 处理“获得数据失败”信号的异常
+
+### 数据层
+
+* 处理参数的合法性
+  * `data`是否与数据库数据表单相符，以免出现对数据库的非法操作
+  * 数据库的名字是否正确
+  * `doc`所代表的键值是否存在
+* 处理与数据库的连接异常
+
+## 数据库表单设置
 
