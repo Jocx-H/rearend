@@ -34,4 +34,4 @@ app.include_router(user.router, prefix="/api")
 
 # 配置容器启动相应的实例
 if __name__ == '__main__':
-    uvicorn.run(app='main:app', port=10086, reload=True)
+    uvicorn.run(app='main:app', port=8000, reload=True)
