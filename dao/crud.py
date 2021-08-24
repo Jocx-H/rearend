@@ -3,11 +3,11 @@
 
 from pymysql.converters import escape_string
 from typing import Optional, List, Dict, Union
-from utils import kv_to_where, kv_to_update_set, open_database
+from dao.utils import kv_to_where, kv_to_update_set, open_database
 
 
 def insert_items(table_name: str, columns: List[str],
-                 values:  List[List[Union[str, int, float]]]) -> Dict:
+                 values:  List[List[Union[str, int, float]]]) -> str:
     r"""
     单表插入
     支持同时插入多条记录
@@ -16,7 +16,7 @@ def insert_items(table_name: str, columns: List[str],
     columns: 指明要插入的表属性，必须包含表中没有默认参数的属性，不允许为空列表
     values: 对应要插入的属性的值列表，列表里每个值要与colums对应
     Return:
-    {"code": 200, "message": "success"}
+    "success"
     Example:
     insert_items(table_name='person',
                 columns=['name', 'age'],
@@ -44,10 +44,10 @@ def insert_items(table_name: str, columns: List[str],
         raise e
     finally:
         connection.close()
-    return {"code": 200, "message": "success"}
+    return "success"
 
 
-def delete_items(table_name: str, where: Optional[Dict[str, Union[str, int, float]]] = None) -> Dict:
+def delete_items(table_name: str, where: Optional[Dict[str, Union[str, int, float]]] = None) -> str:
     r"""
     单表删除
     一次可以根据传入条件删除多条记录，注意传入where要小心，不然很容易误删
@@ -77,7 +77,7 @@ def delete_items(table_name: str, where: Optional[Dict[str, Union[str, int, floa
         raise e
     finally:
         connection.close()
-    return {"code": 200, "message": "success"}
+    return "success"
 
 
 def select_items(table_name: str, columns: Optional[List[str]] = None,
@@ -126,7 +126,7 @@ def select_items(table_name: str, columns: Optional[List[str]] = None,
 
 
 def update_items(table_name: str, items: Dict[str, Union[str, int, float]],
-                 where: Optional[Dict[str, Union[str, int, float]]] = None) -> Dict:
+                 where: Optional[Dict[str, Union[str, int, float]]] = None) -> str:
     r"""
     单表更新
     Args:
@@ -159,29 +159,7 @@ def update_items(table_name: str, items: Dict[str, Union[str, int, float]],
         raise e
     finally:
         connection.close()
-    return {"code": 200, "message": "success"}
+    return "success"
 
 
-if __name__ == '__main__':
-    r"""
-    测试用例
-    """
-    print(select_items(table_name='person',
-                       columns=['name', 'age'],
-                       where=None))
 
-    # print(insert_items(table_name='person',
-    #                   columns=['name', 'age'],
-    #                   values=[['jjj', 20], ['sasd', 21]]))
-
-    # delete_items(table_name='person',
-    #              where={"name": "吴d四" })
-
-    # update_items(table_name='person',
-    #              items={'name': '周杰伦', 'age': 20},
-    #              where={'name': 'Jay', 'age': 21})
-
-    print(select_items(table_name='person',
-                       columns=['name', 'age'],
-                       where=None))
-    
