@@ -8,7 +8,7 @@ from service import user_service
 # 构建api路由
 router = APIRouter(
     prefix="/user",
-    tags=["user"],
+    tags=["User"],
 )
 
 

@@ -1,18 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# 容器
 import uvicorn
-# FASTAPI模板
 from fastapi import FastAPI
-# 注册相应的api
-from api import user
-# 配置跨域
+from api import user_api, job_api, dept_api, notice_api, document_api
 from starlette.middleware.cors import CORSMiddleware
-# 返回json格式的数据
-from fastapi.encoders import jsonable_encoder
-from fastapi.responses import JSONResponse
-# 配置静态资源
 from fastapi.staticfiles import StaticFiles
 
 # 声明fastapi的实例
@@ -30,7 +22,11 @@ app.add_middleware(
 
 
 # 注册api模块
-app.include_router(user.router)
+# app.include_router(job_api.router)
+# app.include_router(user_api.router)
+# app.include_router(notice_api.router)
+# app.include_router(document_api.router)
+app.include_router(dept_api.router, prefix='/a')
 
 # 配置容器启动相应的实例
 if __name__ == '__main__':
