@@ -8,7 +8,7 @@ from service import login_service
 # 构建api路由
 router = APIRouter(
     prefix="/login",
-    tags=["login"],
+    tags=["Login"],
 )
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -24,4 +24,4 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
         raise HTTPException(status_code=400, detail="查无此人")
     elif res is login_service.PASSWORDWRONG:
         raise HTTPException(status_code=400, detail="密码错误")
-    return {'code': 200, 'massage': 'success'}
+    return {'code': 200, 'message': 'success'}

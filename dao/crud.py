@@ -55,7 +55,7 @@ def delete_items(table_name: str,
     一次可以根据传入条件删除多条记录，注意传入where要小心，不然很容易误删
     Args:
     table_name: 要删除的表名
-    where: 要删除的条件键值对，若为None或空列表删除整个表或所有指定的colums条目，目前只能使用=判断
+    where: 要删除的条件键值对，若为None或空字典删除整个表或所有指定的colums条目，目前只能使用=判断
     Return:
     {"code": 200, "message": "success"}
     Example:
@@ -137,7 +137,7 @@ def update_items(table_name: str,
     Args:
     table_name: 要更新的表名
     items: 要更新的属性与值，若为None或者大小为0则不更新
-    where: 要更新的条件键值对，若为None或空列表更新整个表或所有指定的colums条目，目前只能使用=判断
+    where: 要更新的条件键值对，若为None或空字典更新整个表或所有指定的colums条目，目前只能使用=判断
     Return:
     {"code": 200, "message": "success"}
     Example:

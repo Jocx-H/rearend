@@ -20,7 +20,7 @@ class UserAuthority(BaseModel):
     status: Status = Field(
         Status.normal_user,
         description="1 represent administrator and 2 represent normal user")
-    face_url: Optional[HttpUrl] = Field(None, max_length=255)
+    face_url: Optional[HttpUrl] = Field(None)  # max_length=255
     # face_path: Optional[str] = Field(None, max_length=255)
 
 
@@ -44,7 +44,7 @@ class UserInfo(BaseModel):
     tel: Optional[str] = Field(None, min_length=1, max_length=16)
     phone: Optional[str] = Field(None, min_length=1, max_length=11)
     qq_num: Optional[str] = Field(None, min_length=1, max_length=10)
-    email: Optional[EmailStr] = Field(None, min_length=1, max_length=50)
+    email: Optional[EmailStr] = Field(None)  # min_length=1, max_length=50
     sex: Optional[Sex] = None
     party: Optional[str] = Field(None, min_length=1, max_length=10)
     birthday: Optional[datetime] = None

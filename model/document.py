@@ -13,5 +13,5 @@ class Document(BaseModel):
     filename: str = Field(None, min_length=1, max_length=300)
     remark: Optional[str] = Field(None, max_length=300)
     create_time: Optional[datetime] = None
-    username: str = Field(..., min_length=1, max_length=20,
+    username: str = Field(None, min_length=1, max_length=20,
                           description="The username of uploader")

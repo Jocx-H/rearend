@@ -3,7 +3,7 @@
 
 import uvicorn
 from fastapi import FastAPI
-from api import job_api, dept_api, notice_api, document_api, login_api
+from api import job_api, dept_api, notice_api, document_api, login_api, user_api
 from starlette.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
@@ -24,13 +24,12 @@ app.add_middleware(
 
 
 # 注册api模块
+app.include_router(login_api.router, prefix='/api')
 app.include_router(job_api.router, prefix='/api')
 # app.include_router(user_api.router)
 app.include_router(notice_api.router, prefix='/api')
 # app.include_router(document_api.router)
-app.include_router(login_api.router)
-# app.include_router(dept_api.router, prefix='/a')
-# app.include_router(dept_api.router, prefix='/api')
+app.include_router(dept_api.router, prefix='/api')
 
 # 配置容器启动相应的实例
 if __name__ == '__main__':
