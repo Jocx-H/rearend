@@ -1,60 +1,132 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from model import document
+from fastapi import APIRouter, Query, HTTPException, Body, Path
 from model.document import Document
-from dao import crud
+from model.code import Code400
+from service import document_service
+from fastapi.encoders import jsonable_encoder
 from typing import Optional
-from fastapi import HTTPException
-from service.user_service import is_admin
+from pydantic import BaseModel, Field
 
-def add_document(title: str,
-               username: str,
-               filename: str,
-               remark: Optional[str]):
+# 构建api路由
+router = APIRouter(
+    prefix="/document",
+    tags=["Document"],
+)
+
+
+@router.post("/add", responses={400: {"model": Code400}})
+async def add_document(title: str = Body(..., min_length=1, max_length=50),
+                     username: str = Body(..., min_length=1, max_length=20,
+                     description="The username of notifier"),
+                     filename: str = Field(None, min_length=1, max_length=300),
+                     remark: Optional[str] = Body(None, max_length=300)):
     r"""
-    上传文档，title, username, filename必选,remark可选
+    添加文件，title, username,filename必选，remark可选
     """
-    columns = ['title', 'username', 'filename', 'remark']
-    values = [title, username, filename, remark]
-    crud.insert_items("document_inf", columns=columns, values=[values])
-    return crud.select_items("document_inf", columns=['create_time'],
-                             where={'title': title})[0]
+    try:
+        result = document_service.add_document(title, username, filename,remark)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=400, detail="客户端语法错误")
+    return jsonable_encoder(result)
 
 
-def remove_document(title: Optional[str]):
+@router.delete("/remove-all", responses={400: {"model": Code400}})
+async def remove_all_documents():
     r"""
-    删除文档，以路径参数title唯一指定
+    删除全部文件
     """
-    if title is None:
-        return crud.delete_items('document_inf', where=None)
-    else:
-        return crud.delete_items('document_inf', where={'title': title})
+    try:
+        result = document_service.remove_document(None)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=400, detail="客户端语法错误")
+    return jsonable_encoder(result)
 
-
-def get_document(title: Optional[str], limit: Optional[int], skip: int):
+@router.delete("/remove/{title}", responses={400: {"model": Code400}})
+async def remove_document(title: str = Path(..., min_length=1, max_length=50)):
     r"""
-    获取文档的信息，以路径参数title唯一指定
+    删除文件，以路径参数title唯一指定
     """
-    if title is None:
-        return crud.select_items('document_inf',
-                                 columns=['username', 'remark', 'filename'
-                                          'title', 'create_time'],
-                                 where=None)
-    else:
-        return crud.select_items('document_inf', 
-        columns=['username', 'remark', 'filename', 'title', 'create_time'],
-        where={'title': title}, limit=limit, skip=skip)
+    try:
+        result = document_service.remove_document(title)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=400, detail="客户端语法错误")
+    return jsonable_encoder(result)
 
 
-def update_document(title: Optional[str], document: Document):
+@router.get("/get-all", responses={400: {"model": Code400}})
+async def get_all_documents(limit: Optional[int] = Query(None), skip: int = Query(0)):
     r"""
-    更新文档的信息，以传入的title唯一指定
-    可选修改username, remark, title, filename, create_time(要按照timestamp格式，不建议修改)
+    获取全部文件的信息
+    可以选择limit和skip
     """
-    items = document.dict(exclude_unset=True)
-    if title is None:
-        return crud.update_items('document_inf', items, where=None)
-    else:
-        return crud.update_items('document_inf', items, where={'title':title})
+    try:
+        result = document_service.get_document(None, limit, skip)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=400, detail="客户端语法错误")
+    return jsonable_encoder(result)
+
+@router.get("/get/{title}", responses={400: {"model": Code400}})
+async def get_document(title: str = Path(..., min_length=1, max_length=50),
+                     limit: Optional[int] = Query(None), skip: int = Query(0)):
+    r"""
+    获取文件的信息，以路径参数title唯一指定
+    可以选择limit和skip
+    """
+    try:
+        result = document_service.get_document(title, limit, skip)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=400, detail="客户端语法错误")
+    return jsonable_encoder(result)
+
+
+@router.put("/update-all", responses={400: {"model": Code400}})
+async def update_all_documents(document: Document):
+    r"""
+    更新全部文件的信息
+    可选修改username, remark, title,filename create_time(要按照timestamp格式，不建议修改)
+    """
+    try:
+        result = document_service.update_document(None, document)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=400, detail="客户端语法错误")
+    return jsonable_encoder(result)
+
+@router.put("/update/{title}", responses={400: {"model": Code400}})
+async def update_document(document: Document,
+                        title: str = Path(..., min_length=1, max_length=50)):
+    r"""
+    更新文件的信息，以传入的title唯一指定
+    可选修改username, remark, title,filename create_time(要按照timestamp格式，不建议修改)
+    """
+    try:
+        result = document_service.update_document(title, document)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=400, detail="客户端语法错误")
+    return jsonable_encoder(result)
+
+
+
 
