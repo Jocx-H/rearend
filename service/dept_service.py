@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from fastapi import Query
 from model.dept import Department
 from dao import crud
+from typing import Optional
 
 
 def add_dept(dept: Department):
@@ -19,23 +19,35 @@ def add_dept(dept: Department):
     return crud.insert_items("dept_inf", columns=columns, values=[values])
 
 
-def remove_dept(name: str = Query(..., min_length=1, max_length=50)):
+def remove_dept(name: Optional[str]):
     r"""
-    删除部门，以查询参数name唯一指定
+    删除部门，以路径参数name唯一指定
     """
-    return crud.delete_items('dept_inf', where={'name': name})
+    if name is None:
+        return crud.delete_items('dept_inf', where=None)
+    else:
+        return crud.delete_items('dept_inf', where={'name': name})
 
 
-def get_dept(name: str = Query(..., min_length=1, max_length=50)):
+def get_dept(name: Optional[str], limit: Optional[int], skip:int):
     r"""
-    获取部门的信息，以查询参数name唯一指定
+    获取部门的信息，以路径参数name唯一指定，可以选择limit和skip
     """
-    return crud.select_items('dept_inf', columns=['name', 'remark'], where={'name': name})
+    if name is None:
+        return crud.select_items('dept_inf', columns=['name', 'remark'],
+                                 where=None, limit=limit, skip=skip)
+    else:
+        return crud.select_items('dept_inf', columns=['name', 'remark'],
+                                 where={'name': name}, limit=limit, skip=skip)
+    
 
 
-def update_dept(dept: Department):
+def update_dept(name:Optional[str], dept: Department):
     r"""
     更新部门的信息，以传入的name唯一指定，可选修改name和remark
     """
     items = dept.dict(exclude_unset=True)
-    return crud.update_items('dept_inf', items, where={'name': items['name']})
+    if name is None:
+        return crud.update_items('dept_inf', items, where=None)
+    else:
+        return crud.update_items('dept_inf', items, where={'name': name})

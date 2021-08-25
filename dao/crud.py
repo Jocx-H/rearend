@@ -88,7 +88,7 @@ def select_items(table_name: str, columns: Optional[List[str]] = None,
     Args:
     table_name: 要查询的表名
     columns: 要查询的属性，若为None或空列表则返回全部属性
-    where: 要查询的条件键值对，若为None或空列表返回整个表或所有指定的colums条目，目前只能使用=判断
+    where: 要查询的条件键值对，若为None或空字典返回整个表或所有指定的colums条目，目前只能使用=判断
     limit: 返回条目的最大数量，为None时全部返回
     skip: 返回条目的查询偏移
     Return:
