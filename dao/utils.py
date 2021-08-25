@@ -28,19 +28,20 @@ def kv_to_update_set(update_set: Optional[Dict[str, Union[str, int, float]]]):
     Example:
     {"name":"周杰伦", "age":20} => `name`="周杰伦", `age`=20
     """
-    if update_set != None and len(update_set) != 0:
+    if update_set is not None and len(update_set) != 0:
         update_set_choice = []
         for k in update_set.keys():
             if type(update_set[k]) is str:
                 update_set_choice.append(
-                    '`'+escape_string(k)+'`="'+escape_string(update_set[k])+'"')
+                    '`' + escape_string(k) + '`="' + escape_string(update_set[k]) + '"')
             else:
                 update_set_choice.append(
-                    '`'+escape_string(k)+'`='+escape_string(str(update_set[k]))+'')
+                    '`' + escape_string(k) + '`=' + escape_string(str(update_set[k])) + '')
         update_set_choice = ", ".join(update_set_choice)
     else:
         update_set_choice = "1=1"
     return update_set_choice
+
 
 def kv_to_where(where: Optional[Dict[str, Union[str, int, float]]]):
     r"""
@@ -48,15 +49,15 @@ def kv_to_where(where: Optional[Dict[str, Union[str, int, float]]]):
     Example:
     {"name":"周杰伦", "age":20} => (`name`="周杰伦") AND (`age`=20)
     """
-    if where != None and len(where) != 0:
+    if where is not None and len(where) != 0:
         where_choice = []
         for k in where.keys():
             if type(where[k]) is str:
                 where_choice.append(
-                    '(`'+escape_string(k)+'`="'+escape_string(where[k])+'")')
+                    '(`' + escape_string(k) + '`="' + escape_string(where[k]) + '")')
             else:
                 where_choice.append(
-                    '(`'+escape_string(k)+'`='+escape_string(str(where[k]))+')')
+                    '(`' + escape_string(k) + '`=' + escape_string(str(where[k])) + ')')
         where_choice = " AND ".join(where_choice)
     else:
         where_choice = "1=1"

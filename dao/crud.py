@@ -6,7 +6,8 @@ from typing import Optional, List, Dict, Union
 from dao.utils import kv_to_where, kv_to_update_set, open_database
 
 
-def insert_items(table_name: str, columns: List[str],
+def insert_items(table_name: str,
+                 columns: List[str],
                  values:  List[List[Union[str, int, float]]]) -> str:
     r"""
     单表插入
@@ -47,7 +48,8 @@ def insert_items(table_name: str, columns: List[str],
     return "success"
 
 
-def delete_items(table_name: str, where: Optional[Dict[str, Union[str, int, float]]] = None) -> str:
+def delete_items(table_name: str,
+                 where: Optional[Dict[str, Union[str, int, float]]] = None) -> str:
     r"""
     单表删除
     一次可以根据传入条件删除多条记录，注意传入where要小心，不然很容易误删
@@ -80,9 +82,11 @@ def delete_items(table_name: str, where: Optional[Dict[str, Union[str, int, floa
     return "success"
 
 
-def select_items(table_name: str, columns: Optional[List[str]] = None,
+def select_items(table_name: str,
+                 columns: Optional[List[str]] = None,
                  where: Optional[Dict[str, Union[str, int, float]]] = None,
-                 limit: Optional[int] = None, skip: int = 0) -> List[Dict[str, Union[str, int, float]]]:
+                 limit: Optional[int] = None,
+                 skip: int = 0) -> List[Dict[str, Union[str, int, float]]]:
     r"""
     单表查询
     Args:
@@ -101,7 +105,7 @@ def select_items(table_name: str, columns: Optional[List[str]] = None,
     connection, cursor = open_database()
     try:
         table_name = escape_string(table_name)
-        if columns != None and len(columns) != 0:
+        if columns is not None and len(columns) != 0:
             col_choice = ",".join(['`'+escape_string(c)+'`' for c in columns])
         else:
             col_choice = "*"
@@ -125,7 +129,8 @@ def select_items(table_name: str, columns: Optional[List[str]] = None,
     return list(results)
 
 
-def update_items(table_name: str, items: Dict[str, Union[str, int, float]],
+def update_items(table_name: str,
+                 items: Dict[str, Union[str, int, float]],
                  where: Optional[Dict[str, Union[str, int, float]]] = None) -> str:
     r"""
     单表更新
