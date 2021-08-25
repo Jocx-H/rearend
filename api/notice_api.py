@@ -8,7 +8,7 @@ from service import notice_service
 # 构建api路由
 router = APIRouter(
     prefix="/notice",
-    tags=["notice"],
+    tags=["Notice"],
 )
 
 

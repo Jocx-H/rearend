@@ -3,7 +3,7 @@
 # 提供给前端的服务
 
 from fastapi.responses import JSONResponse
-from dao import user_dao
+from dao import utils
 
 
 def get_data(d_name: str, **kwargs):

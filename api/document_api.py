@@ -8,7 +8,7 @@ from service import document_service
 # 构建api路由
 router = APIRouter(
     prefix="/document",
-    tags=["document"],
+    tags=["Document"],
 )
 
 

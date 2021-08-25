@@ -8,7 +8,7 @@ from service import job_service
 # 构建api路由
 router = APIRouter(
     prefix="/job",
-    tags=["job"],
+    tags=["Job"],
 )
 
 
