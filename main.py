@@ -26,7 +26,7 @@ app.add_middleware(
 # 注册api模块
 app.include_router(login_api.router, prefix='/api')
 app.include_router(job_api.router, prefix='/api')
-# app.include_router(user_api.router)
+app.include_router(user_api.router, prefix='/api')
 app.include_router(notice_api.router, prefix='/api')
 # app.include_router(document_api.router)
 app.include_router(dept_api.router, prefix='/api')

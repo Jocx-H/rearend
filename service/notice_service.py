@@ -7,6 +7,7 @@ from typing import Optional
 from fastapi import HTTPException
 from service.user_service import is_admin
 
+
 def add_notice(title: str,
                username: str,
                content: Optional[str]):
