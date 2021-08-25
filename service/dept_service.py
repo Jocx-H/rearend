@@ -41,7 +41,6 @@ def get_dept(name: Optional[str], limit: Optional[int], skip:int):
                                  where={'name': name}, limit=limit, skip=skip)
     
 
-
 def update_dept(name:Optional[str], dept: Department):
     r"""
     更新部门的信息，以传入的name唯一指定，可选修改name和remark
