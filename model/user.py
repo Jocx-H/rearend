@@ -17,8 +17,9 @@ class UserAuthority(BaseModel):
     """
     # username: str = Field(..., min_length=1, max_length=20)
     password: str = Field(..., min_length=6, max_length=32)
-    status: Status = Field(Status.normal_user,
-                           description="1 represent administrator and 2 represent normal user")
+    status: Status = Field(
+        Status.normal_user,
+        description="1 represent administrator and 2 represent normal user")
     face_url: Optional[HttpUrl] = Field(None, max_length=255)
     # face_path: Optional[str] = Field(None, max_length=255)
 

@@ -3,14 +3,16 @@
 
 import uvicorn
 from fastapi import FastAPI
-from api import user_api, job_api, dept_api, notice_api, document_api, login_api
+from api import job_api, dept_api, notice_api, document_api, login_api
 from starlette.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+import os
 
 # 声明fastapi的实例
-app = FastAPI()
+app = FastAPI(title='文档说明', description='整体描述')
 # 配置静态资源的存放路径以及请求的路径
 app.mount("/assets", StaticFiles(directory="assets"), name="assets")
+
 # 跨域配置
 origins = ["*"]
 app.add_middleware(
@@ -28,6 +30,7 @@ app.add_middleware(
 # app.include_router(document_api.router)
 app.include_router(login_api.router)
 # app.include_router(dept_api.router, prefix='/a')
+# app.include_router(dept_api.router, prefix='/api')
 
 # 配置容器启动相应的实例
 if __name__ == '__main__':

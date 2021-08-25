@@ -8,12 +8,12 @@ from typing import Optional, Dict, Union
 import json
 
 
-def open_database(db="lxhtest"):
+def open_database(db="staff_home"):
     r"""
     打开数据库连接，并返回connection, cursor
     """
     # 读取本地配置
-    with open("../assets/config.json") as f:
+    with open("dao/config.json") as f:
         db_configs = json.load(f)['database']
     # 打开数据库连接
     connection = pymysql.connect(**db_configs,

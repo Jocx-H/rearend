@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, HTTPException
 from model.dept import Department
+from model.code import Code400
 from service import dept_service
 from fastapi.encoders import jsonable_encoder
-
+from pydantic import BaseModel
 # 构建api路由
 router = APIRouter(
     prefix="/dept",
@@ -13,40 +14,53 @@ router = APIRouter(
 )
 
 
-@router.post("/add_dept")
+@router.post("/add", responses={400: {"model": Code400}})
 async def add_dept(dept: Department):
     r"""
     添加部门，name必选，remark可选
     """
-    # dept_service.add_dept
-    return dept
+    try:
+        result = dept_service.add_dept(dept)
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=400, detail="客户端语法错误")
+    return jsonable_encoder(result)
 
 
-@router.delete("/remove_dept")
+@router.delete("/remove", responses={400: {"model": Code400}})
 async def remove_dept(name: str = Query(..., min_length=1, max_length=50)):
     r"""
-    删除部门，以name唯一指定
+    删除部门，以查询参数name唯一指定
     """
-    # return dept_service.remove_dept()
-    return name
+    try:
+        result = dept_service.remove_dept(name)
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=400, detail="客户端语法错误")
+    return jsonable_encoder(result)
 
 
-@router.get("/get_dept")
+@router.get("/get", responses={400: {"model": Code400}})
 async def get_dept(name: str = Query(..., min_length=1, max_length=50)):
     r"""
-    获取部门的信息数据，以name唯一指定
+    获取部门的信息，以查询参数name唯一指定
     """
-    # 1.通过调用相应的服务得到对应的反馈
-    # return dept_service.get_dept_infos(name)
-    return name
+    try:
+        result = dept_service.get_dept(name)
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=400, detail="客户端语法错误")
+    return jsonable_encoder(result)
 
-@router.put("/update_dept")
+
+@router.put("/update", responses={400: {"model": Code400}})
 async def update_dept(dept: Department):
     r"""
-    更新部分，以name唯一指定，可选修改name和remark
+    更新部门的信息，以传入的name唯一指定，可选修改name和remark
     """
-    # dept_service.update_dept
-    return dept
-
-
-
+    try:
+        result = dept_service.update_dept(dept)
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=400, detail="客户端语法错误")
+    return jsonable_encoder(result)
