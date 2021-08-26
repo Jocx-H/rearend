@@ -49,7 +49,7 @@ def compare_face(file_buffer_1: BinaryIO, file_buffer_2: BinaryIO) -> bool:
         return False
 
 
-def face_reco_service(content: Union[bytes, str]) -> bool:
+def face_recognition(content: Union[bytes, str]) -> bool:
     r"""
     人脸登录，用于比较人脸信息
     """
@@ -64,7 +64,8 @@ def face_reco_service(content: Union[bytes, str]) -> bool:
                                   columns=['username'],
                                   where={'face_path': path})
     for user in usernames:
-        compared_img = open(path + user['username'] + '.jpg', "rb")
+        compared_img = open(
+            path + user['username'] + '.jpg', "rb")  # TODO 这不一定是jpg啊
         res = compare_face(compared_img, img)
         if res:
             return True

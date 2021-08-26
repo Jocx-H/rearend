@@ -5,12 +5,11 @@ from model.user import User
 from dao import crud
 from typing import Optional, Dict, Union, List
 from service.login_service import hash_password
+from fastapi import UploadFile
+import os
 
-# def is_admin(username: str):
-#     r"""
-#     判断是否为管理员账户
-#     """
-#     return False
+AVATAR_PATH = 'assets/public/avator'
+AVATAR_URL = 'resources/avator'
 
 
 def decode_info(info: dict):
@@ -32,6 +31,19 @@ def decode_info(info: dict):
         assert type(info[i]) == str or type(info[i]) == int \
             or type(info[i]) == float or type(info[i] is None)
     return info
+
+
+async def change_avatar(file: UploadFile,
+                        username: str):
+    r"""
+    修改用户的头像，以路径参数username指定用户
+    """
+    content = await file.read()
+    filename = username+'_avatar.'+file.filename.split('.')[-1]
+    with open(os.path.join(AVATAR_PATH, filename), 'wb') as f:
+        f.write(content)
+    return crud.update_items('user_inf', {'avatar_url': os.path.join(AVATAR_URL, filename)},
+                             where={'username': username})
 
 
 def add_user(user: User) -> str:
@@ -83,6 +95,7 @@ def get_user(where: Optional[Dict[str, Union[str, int, float]]],
     if where is None:
         return crud.select_items('user_inf', where=None, limit=limit, skip=skip)
     else:
-        where = {k: v for k, v in where.items() if v is not None} # 去除字典中值为None的键
+        # 去除字典中值为None的键
+        where = {k: v for k, v in where.items() if v is not None}
         where = decode_info(where)
         return crud.select_items('user_inf', where=where, limit=limit, skip=skip)

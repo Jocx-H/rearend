@@ -80,6 +80,7 @@ async def get_all_documents(limit: Optional[int] = Query(None), skip: int = Quer
     r"""
     获取全部文件的信息
     可以选择limit和skip
+    返回的链接是不带公网IP的
     """
     try:
         result = document_service.get_document(None, limit, skip)
@@ -98,6 +99,7 @@ async def get_document(title: str = Path(..., min_length=1, max_length=50),
     r"""
     获取文件的信息，以路径参数title唯一指定
     可以选择limit和skip
+    返回的链接是不带公网IP的
     """
     try:
         result = document_service.get_document(title, limit, skip)

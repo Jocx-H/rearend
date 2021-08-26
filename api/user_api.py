@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import traceback
-from fastapi import APIRouter, Query, HTTPException, Path
+from fastapi import APIRouter, Query, HTTPException, Path, File, UploadFile
 from model.user import User
 from model.code import Code400
 from service import user_service
@@ -36,6 +36,22 @@ async def add_user(user: User):
         raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
     return jsonable_encoder(result)
 
+
+@router.post("/change-avatar/{username}", responses={400: {"model": Code400}})
+async def change_avatar(file: UploadFile = File(...),
+                        username: str = Path(..., min_length=1, max_length=20)):
+    r"""
+    修改用户的头像，以路径参数username指定用户
+    """
+    try:
+        result = await user_service.change_avatar(file, username)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        print(repr(e))
+        traceback.print_exc()
+        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
+    return jsonable_encoder(result)
 
 @router.delete("/remove/{username}", responses={400: {"model": Code400}})
 async def remove_user(username: str = Path(..., min_length=1, max_length=20)):

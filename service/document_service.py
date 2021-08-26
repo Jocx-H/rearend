@@ -71,6 +71,7 @@ def remove_document(title: Optional[str], filename: Optional[str]) -> str:
 def get_document(title: Optional[str], limit: Optional[int], skip: int):
     r"""
     获取文档的信息，以路径参数title唯一指定
+    返回的链接是不带公网IP的
     """
     if title is None:
         result = crud.select_items('document_inf',
