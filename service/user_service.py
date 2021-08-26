@@ -83,4 +83,6 @@ def get_user(where: Optional[Dict[str, Union[str, int, float]]],
     if where is None:
         return crud.select_items('user_inf', where=None, limit=limit, skip=skip)
     else:
+        where = {k: v for k, v in where.items() if v is not None} # 去除字典中值为None的键
+        where = decode_info(where)
         return crud.select_items('user_inf', where=where, limit=limit, skip=skip)
