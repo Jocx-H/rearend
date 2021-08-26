@@ -11,21 +11,21 @@ SUCCESS = 2
 
 def hash_password(password: str):
     r"""
-    哈希一下密码。目前用假的hash代替
+    hd5加密密码
     """
     user_hash = md5()
     user_hash.update(password.encode(encoding='utf-8'))
     return user_hash.hexdigest()
 
 
-def login_check(name, password):
+def login_check(username, password):
     r"""
-    利用检查用户的名字
+    检查密码是否与数据库中密码相符
     """
     user_check = crud.select_items('user_inf',
-                                   ['username', 'password'],
-                                   where={'username': name})
-    if len(user_check) is 0:
+                                    ['password'],
+                                   where={'username': username})
+    if len(user_check) == 0:
         return NOONE
     else:
         user_check = user_check[0]

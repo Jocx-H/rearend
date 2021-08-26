@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from fastapi import APIRouter, Query, HTTPException
+import traceback
+from fastapi import APIRouter, Query, HTTPException, Path
 from model.user import User
 from model.code import Code400
 from service import user_service
 from fastapi.encoders import jsonable_encoder
-from typing import Optional, Dict, Union
+from typing import Optional
 
 # 构建api路由
 router = APIRouter(
@@ -18,67 +19,111 @@ router = APIRouter(
 @router.post("/add_user", responses={400: {"model": Code400}})
 async def add_user(user: User):
     r"""
-    添加员工，员工的username，password必填
+    添加员工，员工的username必填
+    password默认为123456, 默认权限为普通用户
+    不需要填create_time
     """
     try:
-        assert user.username is not None \
-               and user.password is not None, "必须传入username和password"
+        assert user.username is not None, "必须传入username"
+        if user.password is None:
+            user.password = "123456"
         result = user_service.add_user(user)
     except HTTPException as e:
         raise e
     except Exception as e:
-        print(e)
+        print(repr(e))
+        traceback.print_exc()
         raise HTTPException(status_code=400, detail="客户端语法错误")
     return jsonable_encoder(result)
 
 
 @router.delete("/remove/{username}", responses={400: {"model": Code400}})
-async def remove_user(username: str):
+async def remove_user(username: str = Path(..., min_length=1, max_length=20)):
     r"""
-    只能通过主键id来删除员工
+    删除员工，以路径参数username唯一指定
     """
     try:
         result = user_service.remove_user(username)
     except HTTPException as e:
         raise e
     except Exception as e:
-        print(e)
+        print(repr(e))
+        traceback.print_exc()
         raise HTTPException(status_code=400, detail="客户端语法错误")
     return jsonable_encoder(result)
 
 
-@router.post("/get/{username}", responses={400: {"model": Code400}})
-async def get_user(username: Optional[str] = None,
-                   where: Optional[Dict[str, Union[str, int, float]]] = None,
-                   limit: Optional[int] = Query(20),
-                   skip: int = Query(0)):
+@router.get("/get-all", responses={400: {"model": Code400}})
+async def get_all_users(limit: Optional[int] = Query(10),
+                        skip: int = Query(0)):
     r"""
-    获取员工信息的装置
-    可以选择limit和skip。limit默认是20，skip默认是0
+    获取全体员工的信息
+    可以选择limit和skip。limit默认是10，skip默认是0
     """
     try:
-        result = user_service.get_user(username, where, limit, skip)
-        if result is user_service.WRONG:
-            raise HTTPException(status_code=400, detail="查无此人")
+        result = user_service.get_user(None, limit, skip)
     except HTTPException as e:
         raise e
     except Exception as e:
-        print(e)
+        print(repr(e))
+        traceback.print_exc()
+        raise HTTPException(status_code=400, detail="客户端语法错误")
+    return jsonable_encoder(result)
+
+
+@router.get("/search/{name}", responses={400: {"model": Code400}})
+async def search_user(name: str = Path(..., min_length=1, max_length=20)):
+    r"""
+    根据username或name搜索指定员工
+    """
+    try:
+        result1 = user_service.get_user(
+            where={'name': name}, limit=None, skip=0)
+        result2 = user_service.get_user(
+            where={'username': name}, limit=None, skip=0)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        print(repr(e))
+        traceback.print_exc()
+        raise HTTPException(status_code=400, detail="客户端语法错误")
+    return jsonable_encoder(result1+result2)
+
+
+@router.post("/get", responses={400: {"model": Code400}})
+async def get_user(where: User = None,
+                   limit: Optional[int] = Query(20),
+                   skip: int = Query(0)):
+    r"""
+    获取指定条件(where)的员工信息
+    可以选择limit和skip。limit默认是20，skip默认是0
+    """
+    try:
+        if where is not None:
+            result = user_service.get_user(where.dict(), limit, skip)
+        else:
+            result = user_service.get_user(None, limit, skip)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        print(repr(e))
+        traceback.print_exc()
         raise HTTPException(status_code=400, detail="客户端语法错误")
     return jsonable_encoder(result)
 
 
 @router.put("/update/{username}", responses={400: {"model": Code400}})
 async def update_user(user: User,
-                      username: str):
+                      username: str = Path(..., min_length=1, max_length=20)):
     r"""
-    更新员工信息，以username为唯一识别
+    更新员工信息，以路径参数username唯一指定
     """
     try:
         result = user_service.update_user(username, user)
     except HTTPException as e:
         raise e
     except Exception as e:
-        print(e)
+        print(repr(e))
+        traceback.print_exc()
         raise HTTPException(status_code=400, detail="客户端语法错误")
     return jsonable_encoder(result)

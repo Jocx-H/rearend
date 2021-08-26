@@ -3,10 +3,10 @@
 
 from model.dept import Department
 from dao import crud
-from typing import Optional
+from typing import Optional, Dict, List, Union
 
 
-def add_dept(dept: Department):
+def add_dept(dept: Department) -> str:
     r"""
     添加部门，name必选，remark可选
     """
@@ -19,7 +19,7 @@ def add_dept(dept: Department):
     return crud.insert_items("dept_inf", columns=columns, values=[values])
 
 
-def remove_dept(name: Optional[str]):
+def remove_dept(name: Optional[str]) -> str:
     r"""
     删除部门，以路径参数name唯一指定
     """
@@ -29,7 +29,7 @@ def remove_dept(name: Optional[str]):
         return crud.delete_items('dept_inf', where={'name': name})
 
 
-def get_dept(name: Optional[str], limit: Optional[int], skip:int):
+def get_dept(name: Optional[str], limit: Optional[int], skip: int) -> List[Dict[str, Union[str, int, float]]]:
     r"""
     获取部门的信息，以路径参数name唯一指定，可以选择limit和skip
     """
@@ -39,9 +39,9 @@ def get_dept(name: Optional[str], limit: Optional[int], skip:int):
     else:
         return crud.select_items('dept_inf', columns=['name', 'remark'],
                                  where={'name': name}, limit=limit, skip=skip)
-    
 
-def update_dept(name:Optional[str], dept: Department):
+
+def update_dept(name: Optional[str], dept: Department) -> str:
     r"""
     更新部门的信息，以传入的name唯一指定，可选修改name和remark
     """

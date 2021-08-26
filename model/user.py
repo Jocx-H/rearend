@@ -60,23 +60,23 @@ class User(BaseModel):
     r"""
     创建用户时使用的模型
     """
-    username: str = Field(..., min_length=1, max_length=20)
-    password: str = Field(..., min_length=6, max_length=32)
+    username: str = Field(None, min_length=1, max_length=20)
+    password: str = Field(None, min_length=1, max_length=20)
     status: Status = Field(
         Status.normal_user,
         description="1 represent administrator and 2 represent normal user")
-    avatar_path: Optional[str] = Field(None, max_length=255)
+    name: Optional[str] = Field(None, min_length=1, max_length=20)
+    sex: Optional[Sex] = None
+    card_id: Optional[str] = Field(None, min_length=18, max_length=18)
+    avatar_url: Optional[HttpUrl] = Field(None)  # max_length=255
     department: Optional[str] = Field(None, min_length=1, max_length=50)
     job: Optional[str] = Field(None, min_length=1, max_length=50)
-    name: Optional[str] = Field(None, min_length=1, max_length=20)
-    card_id: Optional[str] = Field(None, min_length=18, max_length=18)
     address: Optional[str] = Field(None, min_length=1, max_length=50)
     post_code: Optional[str] = Field(None, min_length=1, max_length=50)
     tel: Optional[str] = Field(None, min_length=1, max_length=16)
     phone: Optional[str] = Field(None, min_length=1, max_length=11)
     qq_num: Optional[str] = Field(None, min_length=1, max_length=10)
     email: Optional[EmailStr] = Field(None)  # min_length=1, max_length=50
-    sex: Optional[Sex] = None
     party: Optional[str] = Field(None, min_length=1, max_length=10)
     birthday: Optional[datetime] = None
     race: Optional[str] = Field(None, min_length=1, max_length=100)
@@ -85,7 +85,5 @@ class User(BaseModel):
     hobby: Optional[str] = Field(None, min_length=1, max_length=100)
     remark: Optional[str] = Field(None, min_length=1, max_length=500)
     create_date: Optional[datetime] = None
-    face_url: Optional[HttpUrl] = Field(
-        "https://tse4-mm.cn.bing.net/th/id/OIP-C.U5djoFHRT1EPyJYs-5YzSQAAAA?w=183&h=183&c=7&o=5&dpr=1.25&pid=1.7"
-    )  # max_length=255
-    # face_path: Optional[str] = Field(None, max_length=255)
+    face_url: Optional[HttpUrl] = Field(None)  # max_length=255
+
