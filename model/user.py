@@ -65,7 +65,7 @@ class User(BaseModel):
     status: Status = Field(
         Status.normal_user,
         description="1 represent administrator and 2 represent normal user")
-    avatar_path: Optional[str] = Field(None, max_length=255)
+    avatar_url: Optional[str] = Field(None, max_length=255)
     department: Optional[str] = Field(None, min_length=1, max_length=50)
     job: Optional[str] = Field(None, min_length=1, max_length=50)
     name: Optional[str] = Field(None, min_length=1, max_length=20)
@@ -85,7 +85,7 @@ class User(BaseModel):
     hobby: Optional[str] = Field(None, min_length=1, max_length=100)
     remark: Optional[str] = Field(None, min_length=1, max_length=500)
     create_date: Optional[datetime] = None
-    face_url: Optional[HttpUrl] = Field(
+    face_path: Optional[HttpUrl] = Field(
         "https://tse4-mm.cn.bing.net/th/id/OIP-C.U5djoFHRT1EPyJYs-5YzSQAAAA?w=183&h=183&c=7&o=5&dpr=1.25&pid=1.7"
     )  # max_length=255
     # face_path: Optional[str] = Field(None, max_length=255)
