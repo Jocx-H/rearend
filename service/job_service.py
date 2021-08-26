@@ -3,10 +3,10 @@
 
 from model.job import Job
 from dao import crud
-from typing import Optional
+from typing import Optional, List, Dict, Union
 
 
-def add_job(job: Job):
+def add_job(job: Job) -> str:
     r"""
     添加职位，name必选，remark可选
     """
@@ -19,7 +19,7 @@ def add_job(job: Job):
     return crud.insert_items("job_inf", columns=columns, values=[values])
 
 
-def remove_job(name: Optional[str]):
+def remove_job(name: Optional[str]) -> str:
     r"""
     删除职位，以路径参数name唯一指定
     """
@@ -29,7 +29,7 @@ def remove_job(name: Optional[str]):
         return crud.delete_items('job_inf', where={'name': name})
 
 
-def get_job(name: Optional[str], limit: Optional[int], skip: int):
+def get_job(name: Optional[str], limit: Optional[int], skip: int) -> List[Dict[str, Union[str, int, float]]]:
     r"""
     获取职位的信息，以路径参数name唯一指定，可以选择limit和skip
     """
@@ -41,7 +41,7 @@ def get_job(name: Optional[str], limit: Optional[int], skip: int):
                                 where={'name': name}, limit=limit, skip=skip)
 
 
-def update_job(name: Optional[str], job: Job):
+def update_job(name: Optional[str], job: Job) ->str:
     r"""
     更新职位的信息，以传入的name唯一指定，可选修改name和remark
     """

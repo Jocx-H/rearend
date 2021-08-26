@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import traceback
 from fastapi import APIRouter, Query, HTTPException, Body, Path
 from model.document import Document
 from model.code import Code400
@@ -18,19 +19,21 @@ router = APIRouter(
 
 @router.post("/add", responses={400: {"model": Code400}})
 async def add_document(title: str = Body(..., min_length=1, max_length=50),
-                     username: str = Body(..., min_length=1, max_length=20,
-                     description="The username of notifier"),
-                     filename: str = Body(None, min_length=1, max_length=300),
-                     remark: Optional[str] = Body(None, max_length=300)):
+                       username: str = Body(..., min_length=1, max_length=20,
+                                            description="The username of notifier"),
+                       filename: str = Body(None, min_length=1, max_length=300),
+                       remark: Optional[str] = Body(None, max_length=300)):
     r"""
     添加文件，title, username,filename必选，remark可选
     """
     try:
-        result = document_service.add_document(title, username, filename,remark)
+        result = document_service.add_document(
+            title, username, filename, remark)
     except HTTPException as e:
         raise e
     except Exception as e:
-        print(e)
+        print(repr(e))
+        traceback.print_exc()
         raise HTTPException(status_code=400, detail="客户端语法错误")
     return jsonable_encoder(result)
 
@@ -45,9 +48,11 @@ async def remove_all_documents():
     except HTTPException as e:
         raise e
     except Exception as e:
-        print(e)
+        print(repr(e))
+        traceback.print_exc()
         raise HTTPException(status_code=400, detail="客户端语法错误")
     return jsonable_encoder(result)
+
 
 @router.delete("/remove/{title}", responses={400: {"model": Code400}})
 async def remove_document(title: str = Path(..., min_length=1, max_length=50)):
@@ -59,7 +64,8 @@ async def remove_document(title: str = Path(..., min_length=1, max_length=50)):
     except HTTPException as e:
         raise e
     except Exception as e:
-        print(e)
+        print(repr(e))
+        traceback.print_exc()
         raise HTTPException(status_code=400, detail="客户端语法错误")
     return jsonable_encoder(result)
 
@@ -75,13 +81,15 @@ async def get_all_documents(limit: Optional[int] = Query(None), skip: int = Quer
     except HTTPException as e:
         raise e
     except Exception as e:
-        print(e)
+        print(repr(e))
+        traceback.print_exc()
         raise HTTPException(status_code=400, detail="客户端语法错误")
     return jsonable_encoder(result)
 
+
 @router.get("/get/{title}", responses={400: {"model": Code400}})
 async def get_document(title: str = Path(..., min_length=1, max_length=50),
-                     limit: Optional[int] = Query(None), skip: int = Query(0)):
+                       limit: Optional[int] = Query(None), skip: int = Query(0)):
     r"""
     获取文件的信息，以路径参数title唯一指定
     可以选择limit和skip
@@ -91,7 +99,8 @@ async def get_document(title: str = Path(..., min_length=1, max_length=50),
     except HTTPException as e:
         raise e
     except Exception as e:
-        print(e)
+        print(repr(e))
+        traceback.print_exc()
         raise HTTPException(status_code=400, detail="客户端语法错误")
     return jsonable_encoder(result)
 
@@ -107,13 +116,15 @@ async def update_all_documents(document: Document):
     except HTTPException as e:
         raise e
     except Exception as e:
-        print(e)
+        print(repr(e))
+        traceback.print_exc()
         raise HTTPException(status_code=400, detail="客户端语法错误")
     return jsonable_encoder(result)
 
+
 @router.put("/update/{title}", responses={400: {"model": Code400}})
 async def update_document(document: Document,
-                        title: str = Path(..., min_length=1, max_length=50)):
+                          title: str = Path(..., min_length=1, max_length=50)):
     r"""
     更新文件的信息，以传入的title唯一指定
     可选修改username, remark, title,filename create_time(要按照timestamp格式，不建议修改)
@@ -123,6 +134,7 @@ async def update_document(document: Document,
     except HTTPException as e:
         raise e
     except Exception as e:
-        print(e)
+        print(repr(e))
+        traceback.print_exc()
         raise HTTPException(status_code=400, detail="客户端语法错误")
     return jsonable_encoder(result)

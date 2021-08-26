@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import traceback
 from fastapi import APIRouter, Query, Path, HTTPException
 from model.dept import Department
 from model.code import Code400
@@ -26,7 +27,8 @@ async def add_dept(dept: Department):
     except HTTPException as e:
         raise e
     except Exception as e:
-        print(e)
+        print(repr(e))
+        traceback.print_exc()
         raise HTTPException(status_code=400, detail="客户端语法错误")
     return jsonable_encoder(result)
 
@@ -42,7 +44,8 @@ async def remove_all_depts():
     except HTTPException as e:
         raise e
     except Exception as e:
-        print(e)
+        print(repr(e))
+        traceback.print_exc()
         raise HTTPException(status_code=400, detail="客户端语法错误")
     return jsonable_encoder(result)
 
@@ -58,7 +61,8 @@ async def remove_dept(name: str = Path(..., min_length=1, max_length=50)):
     except HTTPException as e:
         raise e
     except Exception as e:
-        print(e)
+        print(repr(e))
+        traceback.print_exc()
         raise HTTPException(status_code=400, detail="客户端语法错误")
     return jsonable_encoder(result)
 
@@ -74,7 +78,8 @@ async def get_all_depts(limit: Optional[int] = Query(None), skip: int = Query(0)
     except HTTPException as e:
         raise e
     except Exception as e:
-        print(e)
+        print(repr(e))
+        traceback.print_exc()
         raise HTTPException(status_code=400, detail="客户端语法错误")
     return jsonable_encoder(result)
 
@@ -91,7 +96,8 @@ async def get_dept(name: str = Path(..., min_length=1, max_length=50),
     except HTTPException as e:
         raise e
     except Exception as e:
-        print(e)
+        print(repr(e))
+        traceback.print_exc()
         raise HTTPException(status_code=400, detail="客户端语法错误")
     return jsonable_encoder(result)
 
@@ -107,7 +113,8 @@ async def update_all_depts(dept: Department):
     except HTTPException as e:
         raise e
     except Exception as e:
-        print(e)
+        print(repr(e))
+        traceback.print_exc()
         raise HTTPException(status_code=400, detail="客户端语法错误")
     return jsonable_encoder(result)
 
@@ -124,6 +131,7 @@ async def update_dept(dept: Department,
     except HTTPException as e:
         raise e
     except Exception as e:
-        print(e)
+        print(repr(e))
+        traceback.print_exc()
         raise HTTPException(status_code=400, detail="客户端语法错误")
     return jsonable_encoder(result)

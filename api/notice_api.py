@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import traceback
 from fastapi import APIRouter, Query, HTTPException, Body, Path
 from model.notice import Notice
 from model.code import Code400
@@ -28,7 +29,8 @@ async def add_notice(title: str = Body(..., min_length=1, max_length=50),
     except HTTPException as e:
         raise e
     except Exception as e:
-        print(e)
+        print(repr(e))
+        traceback.print_exc()
         raise HTTPException(status_code=400, detail="客户端语法错误")
     return jsonable_encoder(result)
 
@@ -43,9 +45,11 @@ async def remove_all_notices():
     except HTTPException as e:
         raise e
     except Exception as e:
-        print(e)
+        print(repr(e))
+        traceback.print_exc()
         raise HTTPException(status_code=400, detail="客户端语法错误")
     return jsonable_encoder(result)
+
 
 @router.delete("/remove/{title}", responses={400: {"model": Code400}})
 async def remove_notice(title: str = Path(..., min_length=1, max_length=50)):
@@ -57,7 +61,8 @@ async def remove_notice(title: str = Path(..., min_length=1, max_length=50)):
     except HTTPException as e:
         raise e
     except Exception as e:
-        print(e)
+        print(repr(e))
+        traceback.print_exc()
         raise HTTPException(status_code=400, detail="客户端语法错误")
     return jsonable_encoder(result)
 
@@ -73,9 +78,11 @@ async def get_all_notices(limit: Optional[int] = Query(None), skip: int = Query(
     except HTTPException as e:
         raise e
     except Exception as e:
-        print(e)
+        print(repr(e))
+        traceback.print_exc()
         raise HTTPException(status_code=400, detail="客户端语法错误")
     return jsonable_encoder(result)
+
 
 @router.get("/get/{title}", responses={400: {"model": Code400}})
 async def get_notice(title: str = Path(..., min_length=1, max_length=50),
@@ -89,7 +96,8 @@ async def get_notice(title: str = Path(..., min_length=1, max_length=50),
     except HTTPException as e:
         raise e
     except Exception as e:
-        print(e)
+        print(repr(e))
+        traceback.print_exc()
         raise HTTPException(status_code=400, detail="客户端语法错误")
     return jsonable_encoder(result)
 
@@ -105,9 +113,11 @@ async def update_all_notices(notice: Notice):
     except HTTPException as e:
         raise e
     except Exception as e:
-        print(e)
+        print(repr(e))
+        traceback.print_exc()
         raise HTTPException(status_code=400, detail="客户端语法错误")
     return jsonable_encoder(result)
+
 
 @router.put("/update/{title}", responses={400: {"model": Code400}})
 async def update_notice(notice: Notice,
@@ -121,6 +131,7 @@ async def update_notice(notice: Notice,
     except HTTPException as e:
         raise e
     except Exception as e:
-        print(e)
+        print(repr(e))
+        traceback.print_exc()
         raise HTTPException(status_code=400, detail="客户端语法错误")
     return jsonable_encoder(result)
