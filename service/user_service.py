@@ -76,7 +76,7 @@ def update_user(username: Optional[str], user: User):
 def get_user(username: Optional[str],
              where: Optional[Dict[str, Union[str, int, float]]],
              limit: Optional[int],
-             skip: Optional[int]):
+             skip: int):
     r"""
     获取员工的信息，提供三种查询模式：
         1. 从数据库第一条开始返回条目
