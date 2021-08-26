@@ -4,7 +4,8 @@ from pydantic import BaseModel
 
 
 class Code400(BaseModel):
-    detail: str = "客户端语法错误"
+    detail: str = "客户端运行错误，请检查输入内容或联系管理员！"
+
 
 class Code403(BaseModel):
-    detail: str="客户端请求权限不足"
+    detail: str = "客户端请求权限不足"

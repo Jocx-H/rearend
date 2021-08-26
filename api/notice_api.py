@@ -31,7 +31,7 @@ async def add_notice(title: str = Body(..., min_length=1, max_length=50),
     except Exception as e:
         print(repr(e))
         traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端语法错误")
+        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
     return jsonable_encoder(result)
 
 
@@ -47,7 +47,7 @@ async def remove_all_notices():
     except Exception as e:
         print(repr(e))
         traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端语法错误")
+        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
     return jsonable_encoder(result)
 
 
@@ -63,7 +63,7 @@ async def remove_notice(title: str = Path(..., min_length=1, max_length=50)):
     except Exception as e:
         print(repr(e))
         traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端语法错误")
+        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
     return jsonable_encoder(result)
 
 
@@ -80,7 +80,7 @@ async def get_all_notices(limit: Optional[int] = Query(None), skip: int = Query(
     except Exception as e:
         print(repr(e))
         traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端语法错误")
+        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
     return jsonable_encoder(result)
 
 
@@ -98,7 +98,7 @@ async def get_notice(title: str = Path(..., min_length=1, max_length=50),
     except Exception as e:
         print(repr(e))
         traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端语法错误")
+        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
     return jsonable_encoder(result)
 
 
@@ -115,7 +115,7 @@ async def update_all_notices(notice: Notice):
     except Exception as e:
         print(repr(e))
         traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端语法错误")
+        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
     return jsonable_encoder(result)
 
 
@@ -133,5 +133,5 @@ async def update_notice(notice: Notice,
     except Exception as e:
         print(repr(e))
         traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端语法错误")
+        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
     return jsonable_encoder(result)

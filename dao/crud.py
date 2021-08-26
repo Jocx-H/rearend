@@ -53,6 +53,7 @@ def delete_items(table_name: str,
     r"""
     单表删除
     一次可以根据传入条件删除多条记录，注意传入where要小心，不然很容易误删
+    如果指定的条件对应的记录不存在也会返回success
     Args:
     table_name: 要删除的表名
     where: 要删除的条件键值对，若为None或空字典删除整个表或所有指定的colums条目，目前只能使用=判断

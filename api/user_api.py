@@ -33,7 +33,7 @@ async def add_user(user: User):
     except Exception as e:
         print(repr(e))
         traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端语法错误")
+        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
     return jsonable_encoder(result)
 
 
@@ -49,7 +49,7 @@ async def remove_user(username: str = Path(..., min_length=1, max_length=20)):
     except Exception as e:
         print(repr(e))
         traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端语法错误")
+        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
     return jsonable_encoder(result)
 
 
@@ -67,7 +67,7 @@ async def get_all_users(limit: Optional[int] = Query(10),
     except Exception as e:
         print(repr(e))
         traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端语法错误")
+        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
     return jsonable_encoder(result)
 
 
@@ -86,7 +86,7 @@ async def search_user(name: str = Path(..., min_length=1, max_length=20)):
     except Exception as e:
         print(repr(e))
         traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端语法错误")
+        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
     return jsonable_encoder(result1+result2)
 
 
@@ -108,7 +108,7 @@ async def get_user(where: User = None,
     except Exception as e:
         print(repr(e))
         traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端语法错误")
+        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
     return jsonable_encoder(result)
 
 
@@ -125,5 +125,5 @@ async def update_user(user: User,
     except Exception as e:
         print(repr(e))
         traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端语法错误")
+        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
     return jsonable_encoder(result)

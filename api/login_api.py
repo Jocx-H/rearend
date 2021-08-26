@@ -22,7 +22,14 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     r"""
     网络登录验证的api
     """
-    result = login_service.login_check(form_data.username, form_data.password)
+    try:
+        result = login_service.login_check(form_data.username, form_data.password)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        print(repr(e))
+        traceback.print_exc()
+        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
     return {'code': 200, 'message': 'success', 'data': result}
 
 
@@ -35,7 +42,7 @@ async def face_read(file: UploadFile = File(...)):
     except Exception as e:
         print(e)
         traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端语法错误")
+        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
     res = face_recognition_service.face_reco_service(content)
 
     if res:

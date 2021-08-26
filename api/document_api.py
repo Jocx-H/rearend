@@ -24,7 +24,8 @@ async def add_document(files: List[UploadFile] = File(...),
                        username: str = Form(...),
                        remark: Optional[str] = Form(None, max_length=300)):
     r"""
-    上传文件，支持同一文档(title)多文件上传
+    创建document的同时上传文件，支持同一文档(title)多文件上传
+    若document已存在，也可以用于添加文件
     title, username 必选，remark可选
     """
     try:
@@ -35,7 +36,7 @@ async def add_document(files: List[UploadFile] = File(...),
     except Exception as e:
         print(repr(e))
         traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端语法错误")
+        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
     return jsonable_encoder(result)
 
 
@@ -51,23 +52,26 @@ async def remove_all_documents():
     except Exception as e:
         print(repr(e))
         traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端语法错误")
+        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
     return jsonable_encoder(result)
 
 
 @router.delete("/remove/{title}", responses={400: {"model": Code400}})
-async def remove_document(title: str = Path(..., min_length=1, max_length=50)):
+async def remove_document(title: str = Path(..., min_length=1, max_length=50),
+                                filename: str = Query(None, min_length=1)):
     r"""
-    删除文档，以路径参数title唯一指定
+    删除指定title（路径参数）的document中的
+    特定文件filename（查询参数，注意包括文件名后缀名）
+    若不指定文件则删除整个文档
     """
     try:
-        result = document_service.remove_document(title)
+        result = document_service.remove_document(title, filename)
     except HTTPException as e:
         raise e
     except Exception as e:
         print(repr(e))
         traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端语法错误")
+        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
     return jsonable_encoder(result)
 
 
@@ -84,7 +88,7 @@ async def get_all_documents(limit: Optional[int] = Query(None), skip: int = Quer
     except Exception as e:
         print(repr(e))
         traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端语法错误")
+        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
     return jsonable_encoder(result)
 
 
@@ -102,40 +106,23 @@ async def get_document(title: str = Path(..., min_length=1, max_length=50),
     except Exception as e:
         print(repr(e))
         traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端语法错误")
+        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
     return jsonable_encoder(result)
 
 
-# @router.put("/update-all", responses={400: {"model": Code400}})
-# async def update_all_documents(document: Document):
-#     r"""
-#     更新全部文件的信息
-#     可选修改username, remark, title,filename create_time(要按照timestamp格式，不建议修改)
-#     """
-#     try:
-#         result = document_service.update_document(None, document)
-#     except HTTPException as e:
-#         raise e
-#     except Exception as e:
-#         print(repr(e))
-#         traceback.print_exc()
-#         raise HTTPException(status_code=400, detail="客户端语法错误")
-#     return jsonable_encoder(result)
-
-
-# @router.put("/update/{title}", responses={400: {"model": Code400}})
-# async def update_document(document: Document,
-#                           title: str = Path(..., min_length=1, max_length=50)):
-#     r"""
-#     更新文件的信息，以传入的title唯一指定
-#     可选修改username, remark, title,filename create_time(要按照timestamp格式，不建议修改)
-#     """
-#     try:
-#         result = document_service.update_document(title, document)
-#     except HTTPException as e:
-#         raise e
-#     except Exception as e:
-#         print(repr(e))
-#         traceback.print_exc()
-#         raise HTTPException(status_code=400, detail="客户端语法错误")
-#     return jsonable_encoder(result)
+@router.put("/update/{title}", responses={400: {"model": Code400}})
+async def update_document(document: Document,
+                          title: str = Path(..., min_length=1, max_length=50)):
+    r"""
+    更新文件的信息，以传入的title唯一指定
+    可选修改username, remark, title, create_time(要按照timestamp格式，不建议修改)
+    """
+    try:
+        result = document_service.update_document(title, document)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        print(repr(e))
+        traceback.print_exc()
+        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
+    return jsonable_encoder(result)
