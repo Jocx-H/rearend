@@ -4,8 +4,7 @@
 from model.notice import Notice
 from dao import crud
 from typing import Optional
-from fastapi import HTTPException
-from service.user_service import is_admin
+
 
 
 def add_notice(title: str,

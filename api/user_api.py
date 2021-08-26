@@ -16,13 +16,13 @@ router = APIRouter(
 
 
 @router.post("/add_user", responses={400: {"model": Code400}})
-async def add_dept(user: User):
+async def add_user(user: User):
     r"""
     添加员工，员工的username，password必填
     """
     try:
         assert user.username is not None \
-               and user.password is not None, "必须传入username或者password"
+               and user.password is not None, "必须传入username和password"
         result = user_service.add_user(user)
     except HTTPException as e:
         raise e
@@ -48,7 +48,7 @@ async def remove_user(username: str):
 
 
 @router.post("/get/{username}", responses={400: {"model": Code400}})
-async def get_dept(username: Optional[str] = None,
+async def get_user(username: Optional[str] = None,
                    where: Optional[Dict[str, Union[str, int, float]]] = None,
                    limit: Optional[int] = Query(20),
                    skip: int = Query(0)):
@@ -69,10 +69,10 @@ async def get_dept(username: Optional[str] = None,
 
 
 @router.put("/update/{username}", responses={400: {"model": Code400}})
-async def update_dept(user: User,
+async def update_user(user: User,
                       username: str):
     r"""
-    更新员工信息，以user_id为唯一识别
+    更新员工信息，以username为唯一识别
     """
     try:
         result = user_service.update_user(username, user)

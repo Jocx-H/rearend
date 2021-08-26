@@ -11,7 +11,7 @@ from fastapi.staticfiles import StaticFiles
 # 声明fastapi的实例
 app = FastAPI(title='文档说明', description='整体描述')
 # 配置静态资源的存放路径以及请求的路径
-app.mount("/assets", StaticFiles(directory="assets"), name="assets")
+app.mount("/resources", StaticFiles(directory="assets/public"), name="assets/public")
 
 # 跨域配置
 origins = ["*"]
