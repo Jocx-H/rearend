@@ -11,23 +11,24 @@ import time
 import shutil
 
 DOCUMENT_PATH = 'assets/public/document'
+DOCUMENT_URL = 'resources/document'
 
-async def add_document(document: Document,
-                 files: List[UploadFile]):
+async def add_document(files: List[UploadFile],
+                       title: str,
+                       username: str,
+                       remark: Optional[str]):
     r"""
     上传文件，支持同一文档(title)多文件上传
     title, username 必选，remark可选
     """
-    document_dict = document.dict()
-    columns = []
-    values = []
-    for k in document_dict.keys():
-        if document_dict[k] != None:
-            columns.append(k)
-            values.append(document_dict[k])
-    folder = os.path.join(DOCUMENT_PATH, document_dict['title'])
+    columns = ['title', 'username']
+    values = [title, username]
+    if remark is not None:
+        columns.append('remark')
+        values.append(remark)
+    folder = os.path.join(DOCUMENT_PATH, title)
     if not os.path.exists(folder):
-        os.mkdir(folder) # 每个document用一个文件夹存文件
+        os.mkdir(folder)  # 每个document用一个文件夹存文件
     start = time.time()
     for file in files:
         content = await file.read()
@@ -35,7 +36,6 @@ async def add_document(document: Document,
             f.write(content)
     msg = crud.insert_items("document_inf", columns=columns, values=[values])
     return {"message": msg, 'time': time.time() - start, 'filename': [file.filename for file in files]}
-
 
 
 def remove_document(title: Optional[str]):
@@ -62,15 +62,17 @@ def get_document(title: Optional[str], limit: Optional[int], skip: int):
     """
     if title is None:
         result = crud.select_items('document_inf',
-                                 columns=['username', 'remark', 'filename',
-                                          'title', 'create_time'],
-                                 where=None, limit=limit, skip=skip)
+                                   columns=['username', 'remark',
+                                            'title', 'create_time'],
+                                   where=None, limit=limit, skip=skip)
     else:
-        result =  crud.select_items('document_inf', 
-        columns=['username', 'remark', 'filename', 'title', 'create_time'],
-        where={'title': title}, limit=limit, skip=skip)
+        result = crud.select_items('document_inf',
+                                   columns=['username', 'remark',
+                                            'title', 'create_time'],
+                                   where={'title': title}, limit=limit, skip=skip)
     for r in result:  # 添加文件下载地址
-        r['file_urls'] = [filename for filename in os.listdir(os.path.join(DOCUMENT_PATH, r['title']))]
+        r['file_urls'] = [os.path.join(DOCUMENT_URL, filename) for filename in os.listdir(
+            os.path.join(DOCUMENT_PATH, r['title']))]
     return result
 
 

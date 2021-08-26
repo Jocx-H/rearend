@@ -23,15 +23,6 @@ app.add_middleware(
     allow_headers=["*"])
 
 
-@app.post("/files/")
-async def create_file(
-    file: bytes = File(...), fileb: UploadFile = File(...), token: str = Form(...)
-):
-    return {
-        "file_size": len(file),
-        "token": token,
-        "fileb_content_type": fileb.content_type,
-    }
 
 # 注册api模块
 app.include_router(login_api.router, prefix='/api')

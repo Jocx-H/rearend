@@ -19,17 +19,17 @@ router = APIRouter(
 
 
 @router.post("/add", responses={400: {"model": Code400}})
-async def add_document(files: UploadFile = File(...), document: Document = Form(...)):
+async def add_document(files: List[UploadFile] = File(...),
+                       title: str = Form(...),
+                       username: str = Form(...),
+                       remark: Optional[str] = Form(None, max_length=300)):
     r"""
     上传文件，支持同一文档(title)多文件上传
     title, username 必选，remark可选
     """
     try:
-        assert document.title is not None and \
-            document.username is not None, "title, username必选！"
-        result = 0
-        # result = await document_service.add_document(
-        #     document, files) 
+        result = await document_service.add_document(
+            files, title, username, remark)
     except HTTPException as e:
         raise e
     except Exception as e:

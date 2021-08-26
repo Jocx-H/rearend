@@ -22,13 +22,8 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     r"""
     网络登录验证的api
     """
-    res = login_service.login_check(form_data.username, form_data.password)
-    if res is login_service.NOONE:
-        raise HTTPException(status_code=400, detail="查无此人")
-    elif res is login_service.PASSWORDWRONG:
-        raise HTTPException(status_code=400, detail="密码错误")
-    return {'code': 200, 'message': 'success'}
-
+    result = login_service.login_check(form_data.username, form_data.password)
+    return {'code': 200, 'message': 'success', 'data': result}
 
 
 @router.post("/face", responses={400: {"model": Code400}})

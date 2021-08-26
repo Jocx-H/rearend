@@ -18,7 +18,7 @@ def decode_info(info: dict):
     将dict里面的内容全部解码成数据库接受的格式
     """
     enums = set(['sex', 'status'])
-    times = set(['birthday', 'create_date'])
+    times = set(['birthday', 'create_time'])
     special_strs = ['EmailStr', 'face_url', 'avatar_url']
     for i in info.keys():
         if info[i] is None:

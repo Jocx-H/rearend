@@ -84,5 +84,5 @@ class User(BaseModel):
     speciality: Optional[str] = Field(None, min_length=1, max_length=10)
     hobby: Optional[str] = Field(None, min_length=1, max_length=100)
     remark: Optional[str] = Field(None, min_length=1, max_length=500)
-    create_date: Optional[datetime] = None
+    create_time: Optional[datetime] = None
     face_url: Optional[HttpUrl] = Field(None)  # max_length=255
