@@ -7,6 +7,7 @@ from typing import Optional, Dict, Union, List
 from service.login_service import hash_password
 from fastapi import UploadFile
 import os
+from datetime import datetime
 
 AVATAR_PATH = 'assets/public/avator'
 AVATAR_URL = 'resources/avator'
@@ -25,7 +26,7 @@ def decode_info(info: dict):
         elif i in enums:
             info[i] = info[i].value
         elif i in times:
-            info[i] = info[i].timestamp()
+            info[i] = info[i].strftime("%Y-%m-%d %H:%M:%S")
         elif i in special_strs:
             info[i] = str(info[i])
         assert type(info[i]) == str or type(info[i]) == int \

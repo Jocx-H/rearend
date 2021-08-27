@@ -22,6 +22,29 @@ async def add_user(user: User):
     添加员工，员工的username必填
     password默认为123456, 默认权限为普通用户
     不需要填create_time
+    Example:
+    {
+        "username": "20185525",
+        "password": "010099",
+        "status": 1,
+        "name": "李新浩",
+        "sex": 1,
+        "card_id": "36073020001001xxxx",
+        "department": "技术部",
+        "phone": "18470435117",
+        "tel":"xxxxxx",
+        "address":"大house",
+        "postcode":"100000",
+        "qq_num": "1520491933",
+        "email": "1520491933@qq.com",
+        "party": "预备党员",
+        "birthday": "2017-03-02",
+        "race": "黄种人",
+        "education": "高中",
+        "speciality": "无",
+        "hobby": "看剧",
+        "remark": "我是李新浩"
+    }
     """
     try:
         assert user.username is not None, "必须传入username"

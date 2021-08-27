@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from typing import Optional
 from pydantic import BaseModel, Field, EmailStr, HttpUrl
-from datetime import datetime
+from datetime import date, datetime
 from enum import Enum
 
 
@@ -78,7 +78,7 @@ class User(BaseModel):
     qq_num: Optional[str] = Field(None, min_length=1, max_length=10)
     email: Optional[EmailStr] = Field(None)  # min_length=1, max_length=50
     party: Optional[str] = Field(None, min_length=1, max_length=10)
-    birthday: Optional[datetime] = None
+    birthday: Optional[date] = None
     race: Optional[str] = Field(None, min_length=1, max_length=100)
     education: Optional[str] = Field(None, min_length=1, max_length=10)
     speciality: Optional[str] = Field(None, min_length=1, max_length=10)

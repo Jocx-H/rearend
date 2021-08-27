@@ -23,7 +23,7 @@ def add_notice(title: str,
 def remove_notice(title: Optional[str]):
     r"""
     删除公告，以路径参数title唯一指定
-    """
+    """   
     if title is None:
         return crud.delete_items('notice_inf', where=None)
     else:
