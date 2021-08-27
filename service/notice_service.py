@@ -38,7 +38,7 @@ def get_notice(title: Optional[str], limit: Optional[int], skip: int):
         return crud.select_items('notice_inf',
                                  columns=['username', 'content',
                                           'title', 'create_time'],
-                                 where=None)
+                                 where=None, limit=limit, skip=skip)
     else:
         return crud.select_items('notice_inf', 
         columns=['username', 'content', 'title', 'create_time'],
