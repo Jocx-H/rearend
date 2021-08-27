@@ -5,7 +5,7 @@ import traceback
 from fastapi import APIRouter, Query, HTTPException, Path, File, UploadFile
 from model.user import User
 from model.code import Code400
-from service import user_service
+from service import user_service, face_recognition_service
 from fastapi.encoders import jsonable_encoder
 from typing import Optional
 
@@ -52,6 +52,7 @@ async def change_avatar(file: UploadFile = File(...),
         traceback.print_exc()
         raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
     return jsonable_encoder(result)
+
 
 @router.delete("/remove/{username}", responses={400: {"model": Code400}})
 async def remove_user(username: str = Path(..., min_length=1, max_length=20)):
@@ -143,3 +144,20 @@ async def update_user(user: User,
         traceback.print_exc()
         raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
     return jsonable_encoder(result)
+
+
+@router.post("/face-register", responses={400: {"model": Code400}})
+async def face_register(username: str, file: UploadFile = File(...)):
+    try:
+        content = await file.read()
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        print(e)
+        traceback.print_exc()
+        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
+    res = face_recognition_service.face_add(content, username)  # 读入图像二进制流
+
+    if res:
+        return {'code': 200, 'message': 'success'}
+    raise HTTPException(status_code=400, detail="不是人脸")
