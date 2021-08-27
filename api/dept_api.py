@@ -70,7 +70,7 @@ async def remove_dept(name: str = Path(..., min_length=1, max_length=50)):
 @router.get("/get-all", responses={400: {"model": Code400}})
 async def get_all_depts(limit: Optional[int] = Query(None), skip: int = Query(0)):
     r"""
-    获取部门的信息，以路径参数name唯一指定(若不传则返回所有部门)
+    获取所有部门的信息
     可以选择limit和skip
     """
     try:
@@ -88,7 +88,7 @@ async def get_all_depts(limit: Optional[int] = Query(None), skip: int = Query(0)
 async def get_dept(name: str = Path(..., min_length=1, max_length=50),
                    limit: Optional[int] = Query(None), skip: int = Query(0)):
     r"""
-    获取部门的信息，以路径参数name唯一指定(若不传则返回所有部门)
+    获取部门的信息，以路径参数name唯一指定
     可以选择limit和skip
     """
     try:

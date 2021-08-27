@@ -70,7 +70,7 @@ async def remove_job(name: str = Path(..., min_length=1, max_length=50)):
 @router.get("/get-all", responses={400: {"model": Code400}})
 async def get_all_jobs(limit: Optional[int] = Query(None), skip: int = Query(0)):
     r"""
-    获取所以职位的信息
+    获取所有职位的信息
     可以选择limit和skip
     """
     try:
