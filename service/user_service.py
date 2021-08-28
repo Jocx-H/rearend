@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from model.user import User
+from model.user import User, Status
 from dao import crud
 from typing import Optional, Dict, Union, List
 from service.login_service import hash_password
@@ -51,6 +51,8 @@ def add_user(user: User) -> str:
     r"""
     添加员工
     """
+    if user.status is None:
+        user.status = Status.normal_user  # 未指定权限则默认为普通用户
     user_dict = decode_info(user.dict())
     user_dict['password'] = hash_password(user_dict['password'])
     columns = []

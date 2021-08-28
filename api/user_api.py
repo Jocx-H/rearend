@@ -132,7 +132,7 @@ async def search_user(name: str = Path(..., min_length=1, max_length=20)):
 
 @router.post("/get", responses={400: {"model": Code400}})
 async def get_user(where: User = None,
-                   limit: Optional[int] = Query(20),
+                   limit: Optional[int] = Query(None),
                    skip: int = Query(0)):
     r"""
     获取指定条件(where)的员工信息

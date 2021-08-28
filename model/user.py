@@ -62,8 +62,7 @@ class User(BaseModel):
     """
     username: str = Field(None, min_length=1, max_length=20)
     password: str = Field(None, min_length=1, max_length=20)
-    status: Status = Field(
-        Status.normal_user,
+    status: Status = Field(None,
         description="1 represent administrator and 2 represent normal user")
     name: Optional[str] = Field(None, min_length=1, max_length=20)
     sex: Optional[Sex] = None
