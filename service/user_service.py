@@ -7,7 +7,6 @@ from typing import Optional, Dict, Union, List
 from service.login_service import hash_password
 from fastapi import UploadFile
 import os
-from datetime import datetime
 
 AVATAR_PATH = 'assets/public/avator'
 AVATAR_URL = 'resources/avator'
@@ -41,6 +40,7 @@ async def change_avatar(file: UploadFile,
     """
     content = await file.read()
     filename = username+'_avatar.'+file.filename.split('.')[-1]
+    assert type(content) is bytes, "文件流应该是Bytes类型吧？"+str(content)
     with open(os.path.join(AVATAR_PATH, filename), 'wb') as f:
         f.write(content)
     return crud.update_items('user_inf', {'avatar_url': os.path.join(AVATAR_URL, filename)},
@@ -102,3 +102,5 @@ def get_user(where: Optional[Dict[str, Union[str, int, float]]],
         where = {k: v for k, v in where.items() if v is not None}
         where = decode_info(where)
         return crud.select_items('user_inf', where=where, limit=limit, skip=skip)
+
+

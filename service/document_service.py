@@ -35,6 +35,7 @@ async def add_document(files: List[UploadFile],
     start = time.time()
     for file in files:
         content = await file.read()
+        assert type(content) is bytes, "文件流应该是Bytes类型吧？"+str(content)
         with open(os.path.join(folder, file.filename), 'wb') as f:
             f.write(content)
     return {"message": "success", 'time': time.time() - start,
