@@ -39,7 +39,7 @@ async def add_user(user: User):
         "email": "1520491933@qq.com",
         "party": "预备党员",
         "birthday": "2017-03-02",
-        "race": "黄种人",
+        "nationality": "中国大陆",
         "education": "高中",
         "speciality": "无",
         "hobby": "看剧",

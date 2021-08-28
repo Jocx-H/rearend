@@ -48,7 +48,7 @@ class Sex(int, Enum):
 #     sex: Optional[Sex] = None
 #     party: Optional[str] = Field(None, min_length=1, max_length=10)
 #     birthday: Optional[datetime] = None
-#     race: Optional[str] = Field(None, min_length=1, max_length=100)
+#     nationality: Optional[str] = Field(None, min_length=1, max_length=100)
 #     education: Optional[str] = Field(None, min_length=1, max_length=10)
 #     speciality: Optional[str] = Field(None, min_length=1, max_length=10)
 #     hobby: Optional[str] = Field(None, min_length=1, max_length=100)
@@ -78,7 +78,7 @@ class User(BaseModel):
     email: Optional[EmailStr] = Field(None)  # min_length=1, max_length=50
     party: Optional[str] = Field(None, min_length=1, max_length=10)
     birthday: Optional[date] = None
-    race: Optional[str] = Field(None, min_length=1, max_length=100)
+    nationality: Optional[str] = Field(None, min_length=1, max_length=100)
     education: Optional[str] = Field(None, min_length=1, max_length=10)
     speciality: Optional[str] = Field(None, min_length=1, max_length=10)
     hobby: Optional[str] = Field(None, min_length=1, max_length=100)
