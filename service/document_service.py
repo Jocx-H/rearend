@@ -39,7 +39,8 @@ async def add_document(files: List[UploadFile],
         with open(os.path.join(folder, file.filename), 'wb') as f:
             f.write(content)
     return {"message": "success", 'time': time.time() - start,
-            'filename': [file.filename for file in files]}
+            'filename': [file.filename for file in files],
+            'file_urls': [os.path.join(DOCUMENT_URL, title, file.filename) for file in files]}
 
 
 def remove_document(title: Optional[str], filename: Optional[str]) -> str:
