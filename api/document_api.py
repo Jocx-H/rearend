@@ -28,16 +28,8 @@ async def add_document(files: List[UploadFile] = File(...),
     若document已存在，也可以用于添加文件
     title, username 必选，remark可选
     """
-    try:
-        result = await document_service.add_document(
-            files, title, username, remark)
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        print(repr(e))
-        traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
-    return jsonable_encoder(result)
+    return await document_service.add_document(
+        files, title, username, remark)
 
 
 @router.delete("/remove-all", responses={400: {"model": Code400}})
@@ -45,15 +37,8 @@ async def remove_all_documents():
     r"""
     删除全部文档
     """
-    try:
-        result = document_service.remove_document(None)
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        print(repr(e))
-        traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
-    return jsonable_encoder(result)
+    return document_service.remove_document(None)
+    
 
 
 @router.delete("/remove/{title}", responses={400: {"model": Code400}})

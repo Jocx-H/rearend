@@ -8,11 +8,11 @@ from fastapi import UploadFile, HTTPException
 import os
 import time
 import shutil
-
+from api.utils import exception_handler, async_exception_handler
 DOCUMENT_PATH = 'assets/public/document'
 DOCUMENT_URL = 'resources/document'
 
-
+@async_exception_handler
 async def add_document(files: List[UploadFile],
                        title: str,
                        username: str,
@@ -43,7 +43,8 @@ async def add_document(files: List[UploadFile],
             'file_urls': [os.path.join(DOCUMENT_URL, title, file.filename) for file in files]}
 
 
-def remove_document(title: Optional[str], filename: Optional[str]) -> str:
+@exception_handler
+def remove_document(title: Optional[str], filename: Optional[str]=None) -> str:
     r"""
     删除指定title（路径参数）的document中的特定文件filename（查询参数）
     若不指定文件则删除整个文档
@@ -70,6 +71,7 @@ def remove_document(title: Optional[str], filename: Optional[str]) -> str:
         return "success"
 
 
+@exception_handler
 def get_document(title: Optional[str], limit: Optional[int], skip: int):
     r"""
     获取文档的信息，以路径参数title唯一指定
@@ -93,6 +95,7 @@ def get_document(title: Optional[str], limit: Optional[int], skip: int):
     return result
 
 
+@exception_handler
 def update_document(title: str, document: Document):
     r"""
     更新文件的信息，以传入的title唯一指定

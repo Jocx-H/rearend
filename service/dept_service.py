@@ -4,12 +4,15 @@
 from model.dept import Department
 from dao import crud
 from typing import Optional, Dict, List, Union
+from api.utils import exception_handler
 
 
+@exception_handler
 def add_dept(dept: Department) -> str:
     r"""
     添加部门，name必选，remark可选
     """
+    assert dept.name is not None, "必须传入name"
     dept_dict = dept.dict()
     columns = []
     values = []
@@ -19,6 +22,7 @@ def add_dept(dept: Department) -> str:
     return crud.insert_items("dept_inf", columns=columns, values=[values])
 
 
+@exception_handler
 def remove_dept(name: Optional[str]) -> str:
     r"""
     删除部门，以路径参数name唯一指定
@@ -29,6 +33,7 @@ def remove_dept(name: Optional[str]) -> str:
         return crud.delete_items('dept_inf', where={'name': name})
 
 
+@exception_handler
 def get_dept(name: Optional[str], limit: Optional[int], skip: int) -> List[Dict[str, Union[str, int, float]]]:
     r"""
     获取部门的信息，以路径参数name唯一指定，可以选择limit和skip
@@ -41,6 +46,7 @@ def get_dept(name: Optional[str], limit: Optional[int], skip: int) -> List[Dict[
                                  where={'name': name}, limit=limit, skip=skip)
 
 
+@exception_handler
 def update_dept(name: Optional[str], dept: Department) -> str:
     r"""
     更新部门的信息，以传入的name唯一指定，可选修改name和remark
