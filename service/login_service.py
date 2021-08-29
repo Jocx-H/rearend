@@ -72,7 +72,7 @@ def detect_face(img_path: str) -> bool:
         return False
 
 
-def compare_face(file_buffer_1: BinaryIO, file_buffer_2: BinaryIO) -> bool:
+def compare_face(file_buffer_1: BinaryIO, file_buffer_2: BinaryIO):
     r"""
     比较人脸
     """
@@ -86,8 +86,10 @@ def compare_face(file_buffer_1: BinaryIO, file_buffer_2: BinaryIO) -> bool:
     response = face_post(face_api_url, data=data, files=files)
     req_con = response.content.decode('utf-8')
     req_dict = JSONDecoder().decode(req_con)
-    res = req_dict['confidence']
-    return res
+    if 'confidence' in req_dict.keys():
+        return req_dict['confidence']
+    else:
+        return None
 
 
 async def face_recognition(file: UploadFile):
