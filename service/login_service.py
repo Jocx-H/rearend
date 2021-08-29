@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from json import JSONDecoder
-from os import remove as file_remove
 from fastapi import UploadFile
 from requests import post as face_post
 from dao import crud
@@ -13,7 +12,7 @@ from hashlib import md5
 from dao import crud
 from fastapi import HTTPException
 import os
-
+import traceback
 
 FACE_PATH = "assets/private/face_img"
 TEMP_PATH = "assets/private/tmp"
@@ -34,13 +33,19 @@ async def face_add(file: UploadFile, username: str):
     suffix = '.' + file.filename.split('.')[-1]
     assert suffix == '.jpg' or suffix == '.png', "只支持JPG(JPEG)，PNG"
     assert type(content) is bytes, "文件流应该是Bytes类型吧？"+str(content)
-    face_path = os.path.join(FACE_PATH, username+suffix)
-    with open(face_path, 'wb') as f:
+    # 先存到临时的文件待检测
+    fake_path = os.path.join(TEMP_PATH, username+'_tmp'+suffix)
+    with open(fake_path, 'wb') as f:
         f.write(content)
-    res = detect_face(face_path)
-    if not res:  # 如果不是人脸就删除图片
-        file_remove(face_path)
-        HTTPException(status_code=400, detail="所上传图片中检测不到人脸！")
+    res = detect_face(fake_path)
+    if res:  # 如果是人脸就保存图片
+        os.remove(fake_path)
+        face_path = os.path.join(FACE_PATH, username+suffix)
+        with open(face_path, 'wb') as f:
+            f.write(content)
+    else:
+        os.remove(fake_path)
+        raise HTTPException(status_code=400, detail="所上传图片中检测不到人脸！")
     return {'code': 200, 'message': 'success'}
 
 def detect_face(img_path: str) -> bool:
@@ -57,11 +62,13 @@ def detect_face(img_path: str) -> bool:
             response = face_post(face_api_url, data=data, files={"image_file": f})
         req_con = response.content.decode('utf-8')
         req_dict = JSONDecoder().decode(req_con)
-        if req_dict['faces'] is None:  # 如果不是人脸则`req_dict[face]`是None
+        # 如果不是人脸则`req_dict[face]`是None
+        if req_dict['faces'] is None or len(req_dict['faces']) == 0:
             return False
         return True
     except Exception as e:
-        print(e)
+        print(repr(e))
+        traceback.print_exc()
         return False
 
 
