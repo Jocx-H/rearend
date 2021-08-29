@@ -43,8 +43,9 @@ async def change_avatar(file: UploadFile,
     assert type(content) is bytes, "文件流应该是Bytes类型吧？"+str(content)
     with open(os.path.join(AVATAR_PATH, filename), 'wb') as f:
         f.write(content)
-    return crud.update_items('user_inf', {'avatar_url': os.path.join(AVATAR_URL, filename)},
-                             where={'username': username})
+    return {'message': crud.update_items('user_inf', {'avatar_url': os.path.join(AVATAR_URL, filename)},
+                                         where={'username': username}),
+            'data': {'avatar_url': os.path.join(AVATAR_URL, filename)}}
 
 
 def add_user(user: User) -> str:

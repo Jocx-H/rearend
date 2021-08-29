@@ -31,7 +31,7 @@ async def face_add(file: UploadFile, username: str):
     content = await file.read()
     # 先把数据流存成图片再检测
     suffix = '.' + file.filename.split('.')[-1]
-    assert suffix == '.jpg' or suffix == '.png', "只支持JPG(JPEG)，PNG"
+    assert suffix == '.jpg' or suffix == '.jpeg' or suffix == '.png', "只支持JPG(JPEG)，PNG"
     assert type(content) is bytes, "文件流应该是Bytes类型吧？"+str(content)
     # 先存到临时的文件待检测
     fake_path = os.path.join(TEMP_PATH, username+'_tmp'+suffix)
@@ -99,7 +99,7 @@ async def face_recognition(file: UploadFile):
     """
     # 处理传进来的照片
     suffix = '.'+file.filename.split('.')[-1]
-    assert suffix == '.jpg' or suffix == '.png', "只支持JPG(JPEG)，PNG"
+    assert suffix == '.jpg' or suffix == '.jpeg' or suffix == '.png', "只支持JPG(JPEG)，PNG"
     content = await file.read()
     assert type(content) is bytes, "文件流应该是Bytes类型吧？"+str(content)
     with open(os.path.join(TEMP_PATH, 'temp'+suffix), 'wb') as f:
@@ -160,7 +160,8 @@ def login_check(username, password):
 
 def has_face(username: str):
     if os.path.exists(os.path.join(FACE_PATH, username+'.jpg')) or \
-    os.path.exists(os.path.join(FACE_PATH, username+'.png')):
+    os.path.exists(os.path.join(FACE_PATH, username+'.jpeg')) or \
+            os.path.exists(os.path.join(FACE_PATH, username+'.png')):
         return 1
     else:
         return 0
