@@ -8,8 +8,8 @@ from service.login_service import hash_password
 from fastapi import UploadFile
 import os
 
-AVATAR_PATH = 'assets/public/avator'
-AVATAR_URL = 'resources/avator'
+AVATAR_PATH = 'assets/public/avatar'
+AVATAR_URL = 'resources/avatar'
 
 
 def decode_info(info: dict):
@@ -102,5 +102,3 @@ def get_user(where: Optional[Dict[str, Union[str, int, float]]],
         where = {k: v for k, v in where.items() if v is not None}
         where = decode_info(where)
         return crud.select_items('user_inf', where=where, limit=limit, skip=skip)
-
-
