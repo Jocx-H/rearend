@@ -43,7 +43,7 @@ async def add_document(files: List[UploadFile],
             'file_urls': [os.path.join(DOCUMENT_URL, title, file.filename) for file in files]}
 
 
-def remove_document(title: Optional[str], filename: Optional[str]) -> str:
+def remove_document(title: Optional[str], filename: Optional[str]=None) -> str:
     r"""
     删除指定title（路径参数）的document中的特定文件filename（查询参数）
     若不指定文件则删除整个文档
