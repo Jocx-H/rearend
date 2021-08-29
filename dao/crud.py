@@ -73,6 +73,7 @@ def delete_items(table_name: str,
             FROM {table_name}
             WHERE {where_choice};
             """
+        print(sql)
         cursor.execute(sql)
         connection.commit()
     except Exception as e:
@@ -119,6 +120,7 @@ def select_items(table_name: str,
                 FROM {table_name} 
                 WHERE {where_choice}
                 """
+        print(sql)
         if limit is not None:
             sql += f"LIMIT {limit} OFFSET {skip}"
         cursor.execute(sql)
@@ -158,6 +160,7 @@ def update_items(table_name: str,
             SET {set_choice}
             WHERE {where_choice};
             """
+        print(sql)
         cursor.execute(sql)
         connection.commit()
     except Exception as e:
