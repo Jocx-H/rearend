@@ -13,7 +13,7 @@ from dao import crud
 from fastapi import HTTPException
 import os
 import traceback
-
+from api.utils import exception_handler, async_exception_handler
 FACE_PATH = "assets/private/face_img"
 TEMP_PATH = "assets/private/tmp"
 THRESHOLD = 70  # 人脸识别通过的阈值
@@ -24,6 +24,7 @@ SECRET_KEY = {
 }  # 密钥
 
 
+@async_exception_handler
 async def face_add(file: UploadFile, username: str):
     r"""
     注册人脸
@@ -48,6 +49,7 @@ async def face_add(file: UploadFile, username: str):
         raise HTTPException(status_code=400, detail="所上传图片中检测不到人脸！")
     return {'code': 200, 'message': 'success'}
 
+
 def detect_face(img_path: str) -> bool:
     r"""
     检测注册的图片是否是人脸
@@ -56,10 +58,11 @@ def detect_face(img_path: str) -> bool:
 
     data = {"api_key": SECRET_KEY['key'],
             "api_secret": SECRET_KEY['secret']}
-    
+
     try:
         with open(img_path, 'rb') as f:
-            response = face_post(face_api_url, data=data, files={"image_file": f})
+            response = face_post(face_api_url, data=data,
+                                 files={"image_file": f})
         req_con = response.content.decode('utf-8')
         req_dict = JSONDecoder().decode(req_con)
         # 如果不是人脸则`req_dict[face]`是None
@@ -92,6 +95,7 @@ def compare_face(file_buffer_1: BinaryIO, file_buffer_2: BinaryIO):
         return None
 
 
+@async_exception_handler
 async def face_recognition(file: UploadFile):
     r"""
     人脸登录，用于比较人脸信息
@@ -135,6 +139,7 @@ def hash_password(password: str):
     return user_hash.hexdigest()
 
 
+@exception_handler
 def login_check(username, password):
     r"""
     检查密码是否与数据库中密码相符
@@ -160,7 +165,7 @@ def login_check(username, password):
 
 def has_face(username: str):
     if os.path.exists(os.path.join(FACE_PATH, username+'.jpg')) or \
-    os.path.exists(os.path.join(FACE_PATH, username+'.jpeg')) or \
+        os.path.exists(os.path.join(FACE_PATH, username+'.jpeg')) or \
             os.path.exists(os.path.join(FACE_PATH, username+'.png')):
         return 1
     else:

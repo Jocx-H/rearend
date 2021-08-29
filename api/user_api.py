@@ -8,6 +8,7 @@ from model.code import Code400
 from service import user_service, login_service
 from fastapi.encoders import jsonable_encoder
 from typing import Optional
+import asyncio
 
 # 构建api路由
 router = APIRouter(
@@ -46,18 +47,9 @@ async def add_user(user: User):
         "remark": "我是李新浩"
     }
     """
-    try:
-        assert user.username is not None, "必须传入username"
-        if user.password is None:
-            user.password = "123456"
-        result = user_service.add_user(user)
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        print(repr(e))
-        traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
-    return jsonable_encoder(result)
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, user_service.add_user, user)
+    
 
 
 @router.post("/change-avatar/{username}", responses={400: {"model": Code400}})
@@ -66,31 +58,17 @@ async def change_avatar(file: UploadFile = File(...),
     r"""
     修改用户的头像，以路径参数username指定用户
     """
-    try:
-        result = await user_service.change_avatar(file, username)
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        print(repr(e))
-        traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
-    return jsonable_encoder(result)
-
+    return await user_service.change_avatar(file, username)
+    
 
 @router.delete("/remove/{username}", responses={400: {"model": Code400}})
 async def remove_user(username: str = Path(..., min_length=1, max_length=20)):
     r"""
     删除员工，以路径参数username唯一指定
     """
-    try:
-        result = user_service.remove_user(username)
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        print(repr(e))
-        traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
-    return jsonable_encoder(result)
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, user_service.remove_user, username)
+    
 
 
 @router.get("/get-all", responses={400: {"model": Code400}})
@@ -100,15 +78,9 @@ async def get_all_users(limit: Optional[int] = Query(10),
     获取全体员工的信息
     可以选择limit和skip。limit默认是10，skip默认是0
     """
-    try:
-        result = user_service.get_user(None, limit, skip)
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        print(repr(e))
-        traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
-    return jsonable_encoder(result)
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, user_service.get_user, None, limit, skip)
+
 
 
 @router.get("/search/{name}", responses={400: {"model": Code400}})
@@ -116,18 +88,12 @@ async def search_user(name: str = Path(..., min_length=1, max_length=20)):
     r"""
     根据username或name搜索指定员工
     """
-    try:
-        result1 = user_service.get_user(
-            where={'name': name}, limit=None, skip=0)
-        result2 = user_service.get_user(
-            where={'username': name}, limit=None, skip=0)
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        print(repr(e))
-        traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
-    return jsonable_encoder(result1+result2)
+    loop = asyncio.get_event_loop()
+    result1 = await loop.run_in_executor(None, user_service.get_user,
+        {'name': name}, None, 0)
+    result2 = await loop.run_in_executor(None, user_service.get_user,
+        {'username': name}, None, 0)
+    return result1+result2
 
 
 @router.post("/get", responses={400: {"model": Code400}})
@@ -138,18 +104,11 @@ async def get_user(where: User = None,
     获取指定条件(where)的员工信息
     可以选择limit和skip。limit默认是20，skip默认是0
     """
-    try:
-        if where is not None:
-            result = user_service.get_user(where.dict(), limit, skip)
-        else:
-            result = user_service.get_user(None, limit, skip)
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        print(repr(e))
-        traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
-    return jsonable_encoder(result)
+    loop = asyncio.get_event_loop()
+    if where is None:
+        return await loop.run_in_executor(None, user_service.get_user, None, limit, skip)
+    else:
+        return await loop.run_in_executor(None, user_service.get_user, where.dict(), limit, skip)
 
 
 @router.put("/update/{username}", responses={400: {"model": Code400}})
@@ -158,15 +117,9 @@ async def update_user(user: User,
     r"""
     更新员工信息，以路径参数username唯一指定
     """
-    try:
-        result = user_service.update_user(username, user)
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        print(repr(e))
-        traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
-    return jsonable_encoder(result)
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, user_service.update_user, username, user)
+    
 
 
 

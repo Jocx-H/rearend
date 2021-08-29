@@ -4,9 +4,10 @@
 from model.notice import Notice
 from dao import crud
 from typing import Optional
+from api.utils import exception_handler
 
 
-
+@exception_handler
 def add_notice(title: str,
                username: str,
                content: Optional[str]):
@@ -20,6 +21,7 @@ def add_notice(title: str,
                              where={'title': title})[0]
 
 
+@exception_handler
 def remove_notice(title: Optional[str]):
     r"""
     删除公告，以路径参数title唯一指定
@@ -30,6 +32,7 @@ def remove_notice(title: Optional[str]):
         return crud.delete_items('notice_inf', where={'title': title})
 
 
+@exception_handler
 def get_notice(title: Optional[str], limit: Optional[int], skip: int):
     r"""
     获取公告的信息，以路径参数title唯一指定
@@ -45,6 +48,7 @@ def get_notice(title: Optional[str], limit: Optional[int], skip: int):
         where={'title': title}, limit=limit, skip=skip)
 
 
+@exception_handler
 def update_notice(title: Optional[str], notice: Notice):
     r"""
     更新公告的信息，以传入的title唯一指定

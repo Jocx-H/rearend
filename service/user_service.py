@@ -7,6 +7,7 @@ from typing import Optional, Dict, Union, List
 from service.login_service import hash_password
 from fastapi import UploadFile
 import os
+from api.utils import exception_handler, async_exception_handler
 
 AVATAR_PATH = 'assets/public/avatar'
 AVATAR_URL = 'resources/avatar'
@@ -33,6 +34,7 @@ def decode_info(info: dict):
     return info
 
 
+@async_exception_handler
 async def change_avatar(file: UploadFile,
                         username: str):
     r"""
@@ -48,10 +50,14 @@ async def change_avatar(file: UploadFile,
             'data': {'avatar_url': os.path.join(AVATAR_URL, filename)}}
 
 
+@exception_handler
 def add_user(user: User) -> str:
     r"""
     添加员工
     """
+    assert user.username is not None, "必须传入username"
+    if user.password is None:
+        user.password = "123456"
     if user.status is None:
         user.status = Status.normal_user  # 未指定权限则默认为普通用户
     user_dict = decode_info(user.dict())
@@ -64,7 +70,7 @@ def add_user(user: User) -> str:
             values.append(user_dict[k])
     return crud.insert_items("user_inf", columns=columns, values=[values])
 
-
+@exception_handler
 def remove_user(username: Optional[str]) -> str:
     r"""
     删除员工，以username为唯一指定目标
@@ -74,7 +80,7 @@ def remove_user(username: Optional[str]) -> str:
     else:
         return crud.delete_items('user_inf', where={'username': username})
 
-
+@exception_handler
 def update_user(username: Optional[str], user: User) -> str:
     r"""
     更新员工的信息，以username为唯一指定目标
@@ -86,7 +92,7 @@ def update_user(username: Optional[str], user: User) -> str:
     else:
         return crud.update_items('user_inf', items, where={'username': username})
 
-
+@exception_handler
 def get_user(where: Optional[Dict[str, Union[str, int, float]]],
              limit: Optional[int],
              skip: int) -> List[Dict[str, Union[str, int, float]]]:

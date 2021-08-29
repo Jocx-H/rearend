@@ -1,6 +1,5 @@
 import traceback
 from fastapi import HTTPException
-from fastapi.encoders import jsonable_encoder
 from functools import wraps
 import asyncio
 
@@ -21,8 +20,8 @@ def exception_handler(func):
             print(repr(e))
             traceback.print_exc()
             raise HTTPException(
-                status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
-        return jsonable_encoder(result)
+                status_code=400, detail="客户端运行错误，错误原因："+str(repr(e))+" 请检查输入内容或联系管理员！")
+        return result
     return try_catch
 
 
@@ -33,7 +32,7 @@ def async_exception_handler(func):
     @wraps(func)
     async def try_catch(*args, **kwargs):
         try:
-            result = await func(*args, **kwargs)
+            result=await func(*args, **kwargs)
             # loop = asyncio.get_event_loop()
             # result = await loop.run_in_executor(None, func, *args, **kwargs)
         except HTTPException as e:
@@ -43,7 +42,7 @@ def async_exception_handler(func):
             traceback.print_exc()
             raise HTTPException(
                 status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
-        return jsonable_encoder(result)
+        return result
     return try_catch
 
 # if __name__ == '__main__':

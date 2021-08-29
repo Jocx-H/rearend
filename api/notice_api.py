@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import traceback
-from fastapi import APIRouter, Query, HTTPException, Body, Path
+from fastapi import APIRouter, Query, Body, Path
 from model.notice import Notice
 from model.code import Code400
 from service import notice_service
-from fastapi.encoders import jsonable_encoder
 from typing import Optional
+import asyncio
 
 # 构建api路由
 router = APIRouter(
@@ -24,15 +23,8 @@ async def add_notice(title: str = Body(..., min_length=1, max_length=50),
     r"""
     添加公告，title, username必选，content可选
     """
-    try:
-        result = notice_service.add_notice(title, username, content)
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        print(repr(e))
-        traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
-    return jsonable_encoder(result)
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, notice_service.add_notice, title, username, content)
 
 
 @router.delete("/remove-all", responses={400: {"model": Code400}})
@@ -40,15 +32,8 @@ async def remove_all_notices():
     r"""
     删除全部公告
     """
-    try:
-        result = notice_service.remove_notice(None)
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        print(repr(e))
-        traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
-    return jsonable_encoder(result)
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, notice_service.remove_notice, None)
 
 
 @router.delete("/remove/{title}", responses={400: {"model": Code400}})
@@ -56,15 +41,8 @@ async def remove_notice(title: str = Path(..., min_length=1, max_length=50)):
     r"""
     删除公告，以路径参数title唯一指定
     """
-    try:
-        result = notice_service.remove_notice(title)
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        print(repr(e))
-        traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
-    return jsonable_encoder(result)
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, notice_service.remove_notice, title)
 
 
 @router.get("/get-all", responses={400: {"model": Code400}})
@@ -73,15 +51,9 @@ async def get_all_notices(limit: Optional[int] = Query(None), skip: int = Query(
     获取全部公告的信息
     可以选择limit和skip
     """
-    try:
-        result = notice_service.get_notice(None, limit, skip)
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        print(repr(e))
-        traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
-    return jsonable_encoder(result)
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, notice_service.get_notice, None, limit, skip)
+    
 
 
 @router.get("/get/{title}", responses={400: {"model": Code400}})
@@ -91,15 +63,9 @@ async def get_notice(title: str = Path(..., min_length=1, max_length=50),
     获取公告的信息，以路径参数title唯一指定
     可以选择limit和skip
     """
-    try:
-        result = notice_service.get_notice(title, limit, skip)
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        print(repr(e))
-        traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
-    return jsonable_encoder(result)
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, notice_service.get_notice, title, limit, skip)
+    
 
 
 @router.put("/update-all", responses={400: {"model": Code400}})
@@ -108,15 +74,8 @@ async def update_all_notices(notice: Notice):
     更新全部公告的信息
     可选修改username, content, title, create_time(要按照timestamp格式，不建议修改)
     """
-    try:
-        result = notice_service.update_notice(None, notice)
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        print(repr(e))
-        traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
-    return jsonable_encoder(result)
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, notice_service.update_notice, None, notice)
 
 
 @router.put("/update/{title}", responses={400: {"model": Code400}})
@@ -126,12 +85,6 @@ async def update_notice(notice: Notice,
     更新公告的信息，以传入的title唯一指定
     可选修改username, content, title, create_time(要按照timestamp格式，不建议修改)
     """
-    try:
-        result = notice_service.update_notice(title, notice)
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        print(repr(e))
-        traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
-    return jsonable_encoder(result)
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, notice_service.update_notice, title, notice)
+    

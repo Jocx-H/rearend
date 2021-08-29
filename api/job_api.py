@@ -8,6 +8,7 @@ from model.code import Code400
 from service import job_service
 from fastapi.encoders import jsonable_encoder
 from typing import Optional
+import asyncio
 
 # 构建api路由
 router = APIRouter(
@@ -21,16 +22,9 @@ async def add_job(job: Job):
     r"""
     添加职位，name必选，remark可选
     """
-    try:
-        assert job.name is not None, "必须传入name"
-        result = job_service.add_job(job)
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        print(repr(e))
-        traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
-    return jsonable_encoder(result)
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, job_service.add_job, job)
+    
 
 
 @router.delete("/remove-all", responses={400: {"model": Code400}})
@@ -39,15 +33,9 @@ async def remove_all_jobs():
     删除所有职位
     注意在删除职位时要保证没有员工在这个职位，否则无法删除
     """
-    try:
-        result = job_service.remove_job(None)
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        print(repr(e))
-        traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
-    return jsonable_encoder(result)
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, job_service.remove_job, None)
+    
 
 
 @router.delete("/remove/{name}", responses={400: {"model": Code400}})
@@ -56,15 +44,9 @@ async def remove_job(name: str = Path(..., min_length=1, max_length=50)):
     删除职位，以路径参数name唯一指定
     ，注意在删除职位时要保证没有员工在这个职位，否则无法删除
     """
-    try:
-        result = job_service.remove_job(name)
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        print(repr(e))
-        traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
-    return jsonable_encoder(result)
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, job_service.remove_job, name)
+    
 
 
 @router.get("/get-all", responses={400: {"model": Code400}})
@@ -73,16 +55,9 @@ async def get_all_jobs(limit: Optional[int] = Query(None), skip: int = Query(0))
     获取所有职位的信息
     可以选择limit和skip
     """
-    try:
-        result = job_service.get_job(None, limit, skip)
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        print(repr(e))
-        traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
-    return jsonable_encoder(result)
-
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, job_service.get_job, None, limit, skip)
+    
 
 @router.get("/get/{name}", responses={400: {"model": Code400}})
 async def get_job(name: str = Path(..., min_length=1, max_length=50),
@@ -90,15 +65,9 @@ async def get_job(name: str = Path(..., min_length=1, max_length=50),
     r"""
     获取职位的信息，以路径参数name唯一指定，可以选择limit和skip
     """
-    try:
-        result = job_service.get_job(name, limit, skip)
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        print(repr(e))
-        traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
-    return jsonable_encoder(result)
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, job_service.get_job, name, limit, skip)
+    
 
 
 @router.put("/update-all", responses={400: {"model": Code400}})
@@ -106,15 +75,9 @@ async def update_all_jobs(job: Job):
     r"""
     更新职位的信息，以传入的路径参数name唯一指定，可选修改name和remark
     """
-    try:
-        result = job_service.update_job(None, job)
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        print(repr(e))
-        traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
-    return jsonable_encoder(result)
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, job_service.update_job, None, job)
+    
 
 
 @router.put("/update/{name}", responses={400: {"model": Code400}})
@@ -123,12 +86,6 @@ async def update_job(job: Job,
     r"""
     更新职位的信息，以传入的路径参数name唯一指定，可选修改name和remark
     """
-    try:
-        result = job_service.update_job(name, job)
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        print(repr(e))
-        traceback.print_exc()
-        raise HTTPException(status_code=400, detail="客户端运行错误，请检查输入内容或联系管理员！")
-    return jsonable_encoder(result)
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, job_service.update_job, name, job)
+    
