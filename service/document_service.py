@@ -33,14 +33,17 @@ async def add_document(files: List[UploadFile],
         crud.insert_items(
             "document_inf", columns=columns, values=[values])
     start = time.time()
-    for file in files:
-        content = await file.read()
-        assert type(content) is bytes, "文件流应该是Bytes类型吧？"+str(content)
-        with open(os.path.join(folder, file.filename), 'wb') as f:
-            f.write(content)
-    return {"message": "success", 'time': time.time() - start,
-            'filename': [file.filename for file in files],
-            'file_urls': [os.path.join(DOCUMENT_URL, title, file.filename) for file in files]}
+    if files is not None:
+        for file in files:
+            content = await file.read()
+            assert type(content) is bytes, "文件流应该是Bytes类型吧？"+str(content)
+            with open(os.path.join(folder, file.filename), 'wb') as f:
+                f.write(content)
+        return {"message": "success", 'time': time.time() - start,
+                'filename': [file.filename for file in files],
+                'file_urls': [os.path.join(DOCUMENT_URL, title, file.filename) for file in files]}
+    else:
+        return {"message": "success"}
 
 
 @exception_handler

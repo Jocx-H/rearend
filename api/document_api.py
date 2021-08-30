@@ -16,14 +16,15 @@ router = APIRouter(
 
 
 @router.post("/add", responses={400: {"model": Code400}})
-async def add_document(files: List[UploadFile] = File(...),
-                       title: str = Form(...),
+async def add_document(title: str = Form(...),
                        username: str = Form(...),
+                       files: List[UploadFile] = File(None),
                        remark: Optional[str] = Form(None, max_length=300)):
     r"""
     创建document的同时上传文件，支持同一文档(title)多文件上传
     若document已存在，也可以用于添加文件
     title, username 必选，remark可选
+    可以不上传文件，但是也不能传一个空值过来
     """
     return await document_service.add_document(
         files, title, username, remark)
@@ -36,12 +37,11 @@ async def remove_all_documents():
     """
     loop = asyncio.get_event_loop()
     return await loop.run_in_executor(None, document_service.remove_document, None)
-    
 
 
 @router.delete("/remove/{title}", responses={400: {"model": Code400}})
 async def remove_document(title: str = Path(..., min_length=1, max_length=50),
-                                filename: str = Query(None, min_length=1)):
+                          filename: str = Query(None, min_length=1)):
     r"""
     删除指定title（路径参数）的document中的
     特定文件filename（查询参数，注意包括文件名后缀名）
@@ -49,7 +49,6 @@ async def remove_document(title: str = Path(..., min_length=1, max_length=50),
     """
     loop = asyncio.get_event_loop()
     return await loop.run_in_executor(None, document_service.remove_document, title, filename)
-    
 
 
 @router.get("/get-all", responses={400: {"model": Code400}})
@@ -61,7 +60,6 @@ async def get_all_documents(limit: Optional[int] = Query(None), skip: int = Quer
     """
     loop = asyncio.get_event_loop()
     return await loop.run_in_executor(None, document_service.get_document, None, limit, skip)
-    
 
 
 @router.get("/get/{title}", responses={400: {"model": Code400}})
@@ -74,7 +72,6 @@ async def get_document(title: str = Path(..., min_length=1, max_length=50),
     """
     loop = asyncio.get_event_loop()
     return await loop.run_in_executor(None, document_service.get_document, title, limit, skip)
-    
 
 
 @router.put("/update/{title}", responses={400: {"model": Code400}})
@@ -86,4 +83,3 @@ async def update_document(document: Document,
     """
     loop = asyncio.get_event_loop()
     return await loop.run_in_executor(None, document_service.update_document, title, document)
-    
