@@ -24,7 +24,7 @@ async def add_document(title: str = Form(...),
     创建document的同时上传文件，支持同一文档(title)多文件上传
     若document已存在，也可以用于添加文件
     title, username 必选，remark可选
-    可以不上传文件，但是也不能传一个空值过来
+    可以不上传文件，但是也不能传一个空值过来，即文档中Send empty value
     """
     return await document_service.add_document(
         files, title, username, remark)
