@@ -67,7 +67,8 @@ class User(BaseModel):
     name: Optional[str] = Field(None, min_length=1, max_length=20)
     sex: Optional[Sex] = None
     card_id: Optional[str] = Field(None, min_length=18, max_length=18)
-    avatar_url: Optional[HttpUrl] = Field(None)  # max_length=255
+    # max_length=255
+    avatar_url: HttpUrl = "http://121.36.59.23/resources/avatar/default_avatar.png"
     department: Optional[str] = Field(None, min_length=1, max_length=50)
     job: Optional[str] = Field(None, min_length=1, max_length=50)
     address: Optional[str] = Field(None, min_length=1, max_length=50)

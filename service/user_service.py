@@ -89,6 +89,8 @@ def update_user(username: Optional[str], user: User) -> str:
     items = user.dict(exclude_unset=True)
     items = jsonable_encoder(items)
     items = {k: v for k, v in items.items() if v is not None}
+    if 'password' in items.keys():
+        items['password'] = hash_password(items['password'])
     if username is None:
         return crud.update_items('user_inf', items, where=None)
     else:
