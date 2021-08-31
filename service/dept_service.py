@@ -53,6 +53,7 @@ def update_dept(name: Optional[str], dept: Department) -> str:
     更新部门的信息，以传入的name唯一指定，可选修改name和remark
     """
     items = dept.dict(exclude_unset=True)
+    items = {k: v for k, v in items.items() if v is not None}
     if name is None:
         return crud.update_items('dept_inf', items, where=None)
     else:

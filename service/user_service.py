@@ -8,30 +8,31 @@ from service.login_service import hash_password
 from fastapi import UploadFile
 import os
 from api.utils import exception_handler, async_exception_handler
+from fastapi.encoders import jsonable_encoder
 
 AVATAR_PATH = 'assets/public/avatar'
 AVATAR_URL = 'resources/avatar'
 
 
-def decode_info(info: dict):
-    r"""
-    将dict里面的内容全部解码成数据库接受的格式
-    """
-    enums = set(['sex', 'status'])
-    times = set(['birthday', 'create_time'])
-    special_strs = ['EmailStr', 'face_url', 'avatar_url']
-    for i in info.keys():
-        if info[i] is None:
-            pass
-        elif i in enums:
-            info[i] = info[i].value
-        elif i in times:
-            info[i] = info[i].strftime("%Y-%m-%d %H:%M:%S")
-        elif i in special_strs:
-            info[i] = str(info[i])
-        assert type(info[i]) == str or type(info[i]) == int \
-            or type(info[i]) == float or type(info[i] is None)
-    return info
+# def decode_info(info: dict):
+#     r"""
+#     将dict里面的内容全部解码成数据库接受的格式，被jsonable_encoder代替
+#     """
+#     enums = set(['sex', 'status'])
+#     times = set(['birthday', 'create_time'])
+#     special_strs = ['EmailStr', 'face_url', 'avatar_url']
+#     for i in info.keys():
+#         if info[i] is None:
+#             pass
+#         elif i in enums:
+#             info[i] = info[i].value
+#         elif i in times:
+#             info[i] = info[i].strftime("%Y-%m-%d %H:%M:%S")
+#         elif i in special_strs:
+#             info[i] = str(info[i])
+#         assert type(info[i]) == str or type(info[i]) == int \
+#             or type(info[i]) == float or type(info[i] is None)
+#     return info
 
 
 @async_exception_handler
@@ -60,7 +61,7 @@ def add_user(user: User) -> str:
         user.password = "123456"
     if user.status is None:
         user.status = Status.normal_user  # 未指定权限则默认为普通用户
-    user_dict = decode_info(user.dict())
+    user_dict = jsonable_encoder(user.dict())
     user_dict['password'] = hash_password(user_dict['password'])
     columns = []
     values = []
@@ -86,7 +87,8 @@ def update_user(username: Optional[str], user: User) -> str:
     更新员工的信息，以username为唯一指定目标
     """
     items = user.dict(exclude_unset=True)
-    items = decode_info(items)
+    items = jsonable_encoder(items)
+    items = {k: v for k, v in items.items() if v is not None}
     if username is None:
         return crud.update_items('user_inf', items, where=None)
     else:
@@ -107,5 +109,5 @@ def get_user(where: Optional[Dict[str, Union[str, int, float]]],
     else:
         # 去除字典中值为None的键
         where = {k: v for k, v in where.items() if v is not None}
-        where = decode_info(where)
+        where = jsonable_encoder(where)
         return crud.select_items('user_inf', where=where, limit=limit, skip=skip)

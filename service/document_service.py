@@ -105,6 +105,7 @@ def update_document(title: str, document: Document):
     可选修改username, remark, title, create_time(要按照timestamp格式，不建议修改)
     """
     items = document.dict(exclude_unset=True)
+    items = {k: v for k, v in items.items() if v is not None}
     if 'title' in items.keys():  # 文件夹更名
         os.rename(os.path.join(DOCUMENT_PATH, title),
                   os.path.join(DOCUMENT_PATH, items['title']))

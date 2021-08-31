@@ -53,6 +53,7 @@ def update_job(name: Optional[str], job: Job) -> str:
     更新职位的信息，以传入的name唯一指定，可选修改name和remark
     """
     items = job.dict(exclude_unset=True)
+    items = {k: v for k, v in items.items() if v is not None}
     if name is None:
         return crud.update_items('job_inf', items, where=None)
     else:
