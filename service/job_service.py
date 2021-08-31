@@ -5,7 +5,7 @@ from model.job import Job
 from dao import crud
 from typing import Optional, List, Dict, Union
 from api.utils import exception_handler
-
+from fastapi.encoders import jsonable_encoder
 
 @exception_handler
 def add_job(job: Job) -> str:
@@ -13,12 +13,13 @@ def add_job(job: Job) -> str:
     添加职位，name必选，remark可选
     """
     assert job.name is not None, "必须传入name"
-    job_dict = job.dict()
+    job_dict = jsonable_encoder(job)
     columns = []
     values = []
     for k in job_dict.keys():
-        columns.append(k)
-        values.append(job_dict[k])
+        if job_dict[k] is not None:
+            columns.append(k)
+            values.append(job_dict[k])
     return crud.insert_items("job_inf", columns=columns, values=[values])
 
 

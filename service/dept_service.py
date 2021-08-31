@@ -5,7 +5,7 @@ from model.dept import Department
 from dao import crud
 from typing import Optional, Dict, List, Union
 from api.utils import exception_handler
-
+from fastapi.encoders import jsonable_encoder
 
 @exception_handler
 def add_dept(dept: Department) -> str:
@@ -13,12 +13,13 @@ def add_dept(dept: Department) -> str:
     添加部门，name必选，remark可选
     """
     assert dept.name is not None, "必须传入name"
-    dept_dict = dept.dict()
+    dept_dict = jsonable_encoder(dept)
     columns = []
     values = []
     for k in dept_dict.keys():
-        columns.append(k)
-        values.append(dept_dict[k])
+        if dept_dict[k] is not None:
+            columns.append(k)
+            values.append(dept_dict[k])
     return crud.insert_items("dept_inf", columns=columns, values=[values])
 
 

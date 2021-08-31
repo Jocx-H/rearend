@@ -14,8 +14,11 @@ def add_notice(title: str,
     r"""
     添加公告，title, username必选, content可选
     """
-    columns = ['title', 'username', 'content']
-    values = [title, username, content]
+    columns = ['title', 'username']
+    values = [title, username]
+    if content is not None:
+        columns.append('content')
+        values.append(content)
     crud.insert_items("notice_inf", columns=columns, values=[values])
     return crud.select_items("notice_inf", columns=['create_time'],
                              where={'title': title})[0]
