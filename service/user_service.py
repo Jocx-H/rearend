@@ -44,6 +44,7 @@ async def change_avatar(file: UploadFile,
     content = await file.read()
     filename = username+'_avatar.'+file.filename.split('.')[-1]
     assert type(content) is bytes, "文件流应该是Bytes类型吧？"+str(content)
+    print(f"将上传头像写入：{os.path.join(AVATAR_PATH, filename)}")
     with open(os.path.join(AVATAR_PATH, filename), 'wb') as f:
         f.write(content)
     return {'message': crud.update_items('user_inf', {'avatar_url': os.path.join(AVATAR_URL, filename)},

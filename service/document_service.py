@@ -29,6 +29,7 @@ async def add_document(files: List[UploadFile],
         values.append(remark)
     folder = os.path.join(DOCUMENT_PATH, title)
     if not os.path.exists(folder):
+        print(f'创建了文件夹：{folder}')
         os.mkdir(folder)  # 每个document用一个文件夹存文件
         crud.insert_items(
             "document_inf", columns=columns, values=[values])
@@ -37,6 +38,7 @@ async def add_document(files: List[UploadFile],
         for file in files:
             content = await file.read()
             assert type(content) is bytes, "文件流应该是Bytes类型吧？"+str(content)
+            print(f'写入了文件：{os.path.join(folder, file.filename)}')
             with open(os.path.join(folder, file.filename), 'wb') as f:
                 f.write(content)
         return {"message": "success", 'time': time.time() - start,
@@ -55,6 +57,7 @@ def remove_document(title: Optional[str], filename: Optional[str]=None) -> str:
     if title is None:
         # 删除document目录下所有文件和文件夹
         for f in os.listdir('assets/public/document'):
+            print(f'删除文件夹（包括其下文件）：{f}')
             if os.path.isdir(f):
                 shutil.rmtree(f)
             else:
@@ -63,10 +66,12 @@ def remove_document(title: Optional[str], filename: Optional[str]=None) -> str:
     else:
         if filename is None:
             if os.path.exists(os.path.join(DOCUMENT_PATH, title)):
+                print(f'删除文件夹（包括其下文件）：{os.path.join(DOCUMENT_PATH, title)}')
                 shutil.rmtree(os.path.join(DOCUMENT_PATH, title))
                 return crud.delete_items('document_inf', where={'title': title})
         else:
             if os.path.exists(os.path.join(DOCUMENT_PATH, title, filename)):
+                print(f'删除文件：{os.path.join(DOCUMENT_PATH, title, filename)}')
                 os.remove(os.path.join(DOCUMENT_PATH, title, filename))
             else:
                 raise HTTPException(
@@ -107,6 +112,7 @@ def update_document(title: str, document: Document):
     items = document.dict(exclude_unset=True)
     items = {k: v for k, v in items.items() if v is not None}
     if 'title' in items.keys():  # 文件夹更名
+        print(f"文件名：{os.path.join(DOCUMENT_PATH, title)}变为：{os.path.join(DOCUMENT_PATH, items['title'])}")
         os.rename(os.path.join(DOCUMENT_PATH, title),
                   os.path.join(DOCUMENT_PATH, items['title']))
     return crud.update_items('document_inf', items, where={'title': title})

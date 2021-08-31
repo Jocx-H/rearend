@@ -36,6 +36,7 @@ async def face_add(file: UploadFile, username: str):
     assert type(content) is bytes, "文件流应该是Bytes类型吧？"+str(content)
     # 先存到临时的文件待检测
     fake_path = os.path.join(TEMP_PATH, username+'_tmp'+suffix)
+    print(f'将上传图片写入临时文件夹：{fake_path}')
     with open(fake_path, 'wb') as f:
         f.write(content)
     res = detect_face(fake_path)
@@ -106,6 +107,7 @@ async def face_recognition(file: UploadFile):
     assert suffix == '.jpg' or suffix == '.jpeg' or suffix == '.png', "只支持JPG(JPEG)，PNG"
     content = await file.read()
     assert type(content) is bytes, "文件流应该是Bytes类型吧？"+str(content)
+    print(f"将临时图片存到：{os.path.join(TEMP_PATH, 'temp'+suffix)}待检测")
     with open(os.path.join(TEMP_PATH, 'temp'+suffix), 'wb') as f:
         f.write(content)
 
