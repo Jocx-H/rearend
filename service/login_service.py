@@ -132,12 +132,12 @@ async def face_recognition(file: UploadFile):
     raise HTTPException(status_code=400, detail="未匹配到人脸信息")
 
 
-def hash_password(password: str):
+def hash_password(password: str, salt: str = "lxh"):
     r"""
     hd5加密密码
     """
     user_hash = md5()
-    user_hash.update(password.encode(encoding='utf-8'))
+    user_hash.update((password+salt).encode(encoding='utf-8'))
     return user_hash.hexdigest()
 
 
