@@ -4,26 +4,29 @@ from json import JSONDecoder
 from fastapi import UploadFile
 from requests import post as face_post
 from dao import crud
-from typing import Optional, BinaryIO, Union
-from typing import BinaryIO, Union
-from fastapi import UploadFile
+from typing import Optional, BinaryIO, BinaryIO
+from fastapi import UploadFile, status
 from json import JSONDecoder
 from hashlib import md5
 from dao import crud
 from fastapi import HTTPException
 import os
 import traceback
-from api.utils import exception_handler, async_exception_handler
+from api.utils import exception_handler, async_exception_handler, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
+from datetime import datetime, timedelta
+from jose import jwt
+
 FACE_PATH = "assets/private/face_img"
 TEMP_PATH = "assets/private/tmp"
 THRESHOLD = 70  # 人脸识别通过的阈值
 
-SECRET_KEY = {
+FACE_SECRET_KEY = {
     "key": "iXWmKDAuviqmnDx9KcGcb5f26VXD8qro",
     "secret": "aDChdAEjL4hY5AYfshQL1rW4DhUVzyWu"
-}  # 密钥
+}  # 旷世api密钥
 
 
+# 人脸注册部分
 @async_exception_handler
 async def face_add(file: UploadFile, username: str):
     r"""
@@ -57,8 +60,8 @@ def detect_face(img_path: str) -> bool:
     """
     face_api_url = "https://api-cn.faceplusplus.com/facepp/v3/detect"
 
-    data = {"api_key": SECRET_KEY['key'],
-            "api_secret": SECRET_KEY['secret']}
+    data = {"api_key": FACE_SECRET_KEY['key'],
+            "api_secret": FACE_SECRET_KEY['secret']}
 
     try:
         with open(img_path, 'rb') as f:
@@ -82,8 +85,8 @@ def compare_face(file_buffer_1: BinaryIO, file_buffer_2: BinaryIO):
     """
     face_api_url = "https://api-cn.faceplusplus.com/facepp/v3/compare"
 
-    data = {"api_key": SECRET_KEY['key'],
-            "api_secret": SECRET_KEY['secret']}
+    data = {"api_key": FACE_SECRET_KEY['key'],
+            "api_secret": FACE_SECRET_KEY['secret']}
 
     files = {"image_file1": file_buffer_1, "image_file2": file_buffer_2}
 
@@ -96,6 +99,7 @@ def compare_face(file_buffer_1: BinaryIO, file_buffer_2: BinaryIO):
         return None
 
 
+# 人脸识别部分
 @async_exception_handler
 async def face_recognition(file: UploadFile):
     r"""
@@ -132,6 +136,20 @@ async def face_recognition(file: UploadFile):
     raise HTTPException(status_code=400, detail="未匹配到人脸信息")
 
 
+def has_face(username: str):
+    r"""
+    判断人脸信息是否注册
+    """
+    if os.path.exists(os.path.join(FACE_PATH, username+'.jpg')) or \
+        os.path.exists(os.path.join(FACE_PATH, username+'.jpeg')) or \
+            os.path.exists(os.path.join(FACE_PATH, username+'.png')):
+        return 1
+    else:
+        return 0
+
+
+# 密码登录部分
+
 def hash_password(password: str, salt: str = "lxh"):
     r"""
     hd5加密密码
@@ -139,6 +157,21 @@ def hash_password(password: str, salt: str = "lxh"):
     user_hash = md5()
     user_hash.update((password+salt).encode(encoding='utf-8'))
     return user_hash.hexdigest()
+
+
+
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+    r"""
+    生成一个jwt密钥
+    """
+    to_encode = data.copy()
+    if expires_delta:
+        expire = datetime.utcnow() + expires_delta
+    else:
+        expire = datetime.utcnow() + timedelta(minutes=15)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, FACE_SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
 
 
 @exception_handler
@@ -155,20 +188,17 @@ def login_check(username, password):
                                    infos,
                                    where={'username': username})
     if len(user_check) == 0:
-        raise HTTPException(status_code=400, detail="查无此人")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="用户名不存在", headers={"WWW-Authenticate": "Bearer"})
     else:
         user_check = user_check[0]
         if user_check['password'] != hash_password(password):
-            raise HTTPException(status_code=400, detail="密码错误")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, detail="密码错误", headers={"WWW-Authenticate": "Bearer"})
     del user_check['password']
     user_check['has_face'] = has_face(username)
-    return user_check
-
-
-def has_face(username: str):
-    if os.path.exists(os.path.join(FACE_PATH, username+'.jpg')) or \
-        os.path.exists(os.path.join(FACE_PATH, username+'.jpeg')) or \
-            os.path.exists(os.path.join(FACE_PATH, username+'.png')):
-        return 1
-    else:
-        return 0
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": str(user_check['username'])+':'+str(user_check['status'])}, expires_delta=access_token_expires
+    )
+    return {'message': 'success', 'data': user_check, "access_token": access_token, "token_type": "bearer"}

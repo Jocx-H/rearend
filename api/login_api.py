@@ -3,7 +3,7 @@
 
 from model.code import Code400
 from fastapi import Depends, APIRouter, UploadFile, File
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm
 from service import login_service
 import asyncio
 
@@ -13,22 +13,25 @@ router = APIRouter(
     tags=["Login"],
 )
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 @router.post("/passwd")
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     r"""
-    网络登录验证的api，返回has_face=1表示人脸已经注册，0为未注册
+    网络登录验证的api，返回data和token，
+    其中data中has_face=1表示人脸已经注册，0为未注册
     """
     loop = asyncio.get_event_loop()
     result = await loop.run_in_executor(None, login_service.login_check,
                                         form_data.username, form_data.password)
-    return {'code': 200, 'message': 'success', 'data': result}
+    return result
 
 
 @router.post("/face-recognition", responses={400: {"model": Code400}})
 async def face_recognition(file: UploadFile = File(...)):
+    r"""
+    人脸登录验证的api，返回data和token
+    """
     result = await login_service.face_recognition(file)
     return {'code': 200, 'message': 'success', 'data': result}
 

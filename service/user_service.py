@@ -62,6 +62,8 @@ def add_user(user: User) -> str:
         user.password = "123456"
     if user.status is None:
         user.status = Status.normal_user  # 未指定权限则默认为普通用户
+    if user.avatar_url is None:
+        user.avatar_url = "resources/avatar/default_avatar.png"
     user_dict = jsonable_encoder(user.dict())
     user_dict['password'] = hash_password(user_dict['password'])
     columns = []

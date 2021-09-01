@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from typing import Optional
-from pydantic import BaseModel, Field, EmailStr, HttpUrl
+from pydantic import BaseModel, Field, EmailStr
 from datetime import date, datetime
 from enum import Enum
 
@@ -61,14 +61,14 @@ class User(BaseModel):
     创建用户时使用的模型
     """
     username: str = Field(None, min_length=1, max_length=20)
-    password: str = Field(None, min_length=1, max_length=20)
+    password: str = Field(None, min_length=1, max_length=32)
     status: Status = Field(None,
         description="1 represent administrator and 2 represent normal user")
     name: Optional[str] = Field(None, min_length=1, max_length=20)
     sex: Optional[Sex] = None
     card_id: Optional[str] = Field(None, min_length=18, max_length=18)
     # max_length=255
-    avatar_url: HttpUrl = "http://121.36.59.23/resources/avatar/default_avatar.png"
+    avatar_url: Optional[str] = None
     department: Optional[str] = Field(None, min_length=1, max_length=50)
     job: Optional[str] = Field(None, min_length=1, max_length=50)
     address: Optional[str] = Field(None, min_length=1, max_length=50)
@@ -85,4 +85,3 @@ class User(BaseModel):
     hobby: Optional[str] = Field(None, min_length=1, max_length=100)
     remark: Optional[str] = Field(None, min_length=1, max_length=500)
     create_time: Optional[datetime] = None
-    face_url: Optional[HttpUrl] = Field(None)  # max_length=255

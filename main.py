@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import uvicorn
-from fastapi import FastAPI, File, UploadFile, Form
+from fastapi import FastAPI
 from api import job_api, dept_api, notice_api, document_api, login_api, user_api
 from starlette.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
