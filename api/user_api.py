@@ -112,6 +112,7 @@ async def update_user(user: User,
                       username: str = Path(..., min_length=1, max_length=20)):
     r"""
     更新员工信息，以路径参数username唯一指定
+    赋予了非管理员账号修改用户的权力（这里由于接口未区分开存在潜在的漏洞）
     """
     loop = asyncio.get_event_loop()
     return await loop.run_in_executor(None, user_service.update_user, username, user)
