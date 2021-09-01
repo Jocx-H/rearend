@@ -107,7 +107,7 @@ async def get_user(where: User = None,
         return await loop.run_in_executor(None, user_service.get_user, where.dict(), limit, skip)
 
 
-@router.put("/update/{username}", responses={400: {"model": Code400}}, dependencies=[Depends(check_current_admin_user)])
+@router.put("/update/{username}", responses={400: {"model": Code400}}, dependencies=[Depends(check_current_user)])
 async def update_user(user: User,
                       username: str = Path(..., min_length=1, max_length=20)):
     r"""
