@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from fastapi import APIRouter, Query, Path, File, UploadFile, Form
+from fastapi import APIRouter, Query, Path, File, UploadFile, Form, Depends
 from model.document import Document
 from model.code import Code400
 from service import document_service
 from typing import Optional, List
+from api.utils import check_current_admin_user, check_current_user
 import asyncio
 
 # 构建api路由
@@ -15,7 +16,7 @@ router = APIRouter(
 )
 
 
-@router.post("/add", responses={400: {"model": Code400}})
+@router.post("/add", responses={400: {"model": Code400}}, dependencies=[Depends(check_current_admin_user)])
 async def add_document(title: str = Form(...),
                        username: str = Form(...),
                        files: List[UploadFile] = File(None),
@@ -30,7 +31,7 @@ async def add_document(title: str = Form(...),
         files, title, username, remark)
 
 
-@router.delete("/remove-all", responses={400: {"model": Code400}})
+@router.delete("/remove-all", responses={400: {"model": Code400}}, dependencies=[Depends(check_current_admin_user)])
 async def remove_all_documents():
     r"""
     删除全部文档
@@ -39,7 +40,7 @@ async def remove_all_documents():
     return await loop.run_in_executor(None, document_service.remove_document, None)
 
 
-@router.delete("/remove/{title}", responses={400: {"model": Code400}})
+@router.delete("/remove/{title}", responses={400: {"model": Code400}}, dependencies=[Depends(check_current_admin_user)])
 async def remove_document(title: str = Path(..., min_length=1, max_length=50),
                           filename: str = Query(None, min_length=1)):
     r"""
@@ -51,7 +52,7 @@ async def remove_document(title: str = Path(..., min_length=1, max_length=50),
     return await loop.run_in_executor(None, document_service.remove_document, title, filename)
 
 
-@router.get("/get-all", responses={400: {"model": Code400}})
+@router.get("/get-all", responses={400: {"model": Code400}}, dependencies=[Depends(check_current_user)])
 async def get_all_documents(limit: Optional[int] = Query(None), skip: int = Query(0)):
     r"""
     获取全部文件的信息
@@ -62,7 +63,7 @@ async def get_all_documents(limit: Optional[int] = Query(None), skip: int = Quer
     return await loop.run_in_executor(None, document_service.get_document, None, limit, skip)
 
 
-@router.get("/get/{title}", responses={400: {"model": Code400}})
+@router.get("/get/{title}", responses={400: {"model": Code400}}, dependencies=[Depends(check_current_user)])
 async def get_document(title: str = Path(..., min_length=1, max_length=50),
                        limit: Optional[int] = Query(None), skip: int = Query(0)):
     r"""
@@ -74,7 +75,7 @@ async def get_document(title: str = Path(..., min_length=1, max_length=50),
     return await loop.run_in_executor(None, document_service.get_document, title, limit, skip)
 
 
-@router.put("/update/{title}", responses={400: {"model": Code400}})
+@router.put("/update/{title}", responses={400: {"model": Code400}}, dependencies=[Depends(check_current_admin_user)])
 async def update_document(document: Document,
                           title: str = Path(..., min_length=1, max_length=50)):
     r"""

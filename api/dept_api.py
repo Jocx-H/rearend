@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from fastapi import APIRouter, Query, Path
+from fastapi import APIRouter, Query, Path, Depends
 from model.dept import Department
 from model.code import Code400
 from service import dept_service
 from typing import Optional
+from api.utils import check_current_admin_user, check_current_user
 import asyncio
 
 # 构建api路由
@@ -15,7 +16,7 @@ router = APIRouter(
 )
 
 
-@router.post("/add", responses={400: {"model": Code400}})
+@router.post("/add", responses={400: {"model": Code400}}, dependencies=[Depends(check_current_admin_user)])
 async def add_dept(dept: Department):
     r"""
     添加部门，name必选，remark可选
@@ -24,8 +25,7 @@ async def add_dept(dept: Department):
     return await loop.run_in_executor(None, dept_service.add_dept, dept)
 
 
-
-@router.delete("/remove-all", responses={400: {"model": Code400}})
+@router.delete("/remove-all", responses={400: {"model": Code400}}, dependencies=[Depends(check_current_admin_user)])
 async def remove_all_depts():
     r"""
     删除所有部门
@@ -35,7 +35,7 @@ async def remove_all_depts():
     return await loop.run_in_executor(None, dept_service.remove_dept, None)
 
 
-@router.delete("/remove/{name}", responses={400: {"model": Code400}})
+@router.delete("/remove/{name}", responses={400: {"model": Code400}}, dependencies=[Depends(check_current_admin_user)])
 async def remove_dept(name: str = Path(..., min_length=1, max_length=50)):
     r"""
     删除部门，以路径参数name唯一指定
@@ -45,7 +45,7 @@ async def remove_dept(name: str = Path(..., min_length=1, max_length=50)):
     return await loop.run_in_executor(None, dept_service.remove_dept, name)
 
 
-@router.get("/get-all", responses={400: {"model": Code400}})
+@router.get("/get-all", responses={400: {"model": Code400}}, dependencies=[Depends(check_current_user)])
 async def get_all_depts(limit: Optional[int] = Query(None), skip: int = Query(0)):
     r"""
     获取所有部门的信息
@@ -55,7 +55,7 @@ async def get_all_depts(limit: Optional[int] = Query(None), skip: int = Query(0)
     return await loop.run_in_executor(None, dept_service.get_dept, None, limit, skip)
 
 
-@router.get("/get/{name}", responses={400: {"model": Code400}})
+@router.get("/get/{name}", responses={400: {"model": Code400}}, dependencies=[Depends(check_current_user)])
 async def get_dept(name: str = Path(..., min_length=1, max_length=50),
                    limit: Optional[int] = Query(None), skip: int = Query(0)):
     r"""
@@ -66,7 +66,7 @@ async def get_dept(name: str = Path(..., min_length=1, max_length=50),
     return await loop.run_in_executor(None, dept_service.get_dept, name, limit, skip)
 
 
-@router.put("/update-all", responses={400: {"model": Code400}})
+@router.put("/update-all", responses={400: {"model": Code400}}, dependencies=[Depends(check_current_admin_user)])
 async def update_all_depts(dept: Department):
     r"""
     更新部门的信息，以传入的路径参数name唯一指定(若不指定则更新所有部门)
@@ -76,7 +76,7 @@ async def update_all_depts(dept: Department):
     return await loop.run_in_executor(None, dept_service.update_dept, None, dept)
 
 
-@router.put("/update/{name}", responses={400: {"model": Code400}})
+@router.put("/update/{name}", responses={400: {"model": Code400}}, dependencies=[Depends(check_current_admin_user)])
 async def update_dept(dept: Department,
                       name: str = Path(..., min_length=1, max_length=50)):
     r"""

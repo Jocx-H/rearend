@@ -6,6 +6,7 @@ from fastapi import Depends, APIRouter, UploadFile, File
 from fastapi.security import OAuth2PasswordRequestForm
 from service import login_service
 import asyncio
+from api.utils import check_current_user
 
 # 构建api路由
 router = APIRouter(
@@ -33,10 +34,10 @@ async def face_recognition(file: UploadFile = File(...)):
     人脸登录验证的api，返回data和token
     """
     result = await login_service.face_recognition(file)
-    return {'code': 200, 'message': 'success', 'data': result}
+    return result
 
 
-@router.post("/face-register", responses={400: {"model": Code400}})
+@router.post("/face-register", responses={400: {"model": Code400}}, dependencies=[Depends(check_current_user)])
 async def face_register(username: str, file: UploadFile = File(...)):
     r"""
     注册人脸信息

@@ -12,7 +12,7 @@ from dao import crud
 from fastapi import HTTPException
 import os
 import traceback
-from api.utils import exception_handler, async_exception_handler, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
+from api.utils import exception_handler, async_exception_handler, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY
 from datetime import datetime, timedelta
 from jose import jwt
 
@@ -23,7 +23,7 @@ THRESHOLD = 70  # 人脸识别通过的阈值
 FACE_SECRET_KEY = {
     "key": "iXWmKDAuviqmnDx9KcGcb5f26VXD8qro",
     "secret": "aDChdAEjL4hY5AYfshQL1rW4DhUVzyWu"
-}  # 旷世api密钥
+}  # 旷视api密钥
 
 
 # 人脸注册部分
@@ -132,7 +132,14 @@ async def face_recognition(file: UploadFile):
                                                    where={'username': username})
                     if len(user_check) > 0:
                         user_check[0]['has_face'] = 1
-                        return user_check[0]
+                        user_check =  user_check[0]
+                        access_token_expires = timedelta(
+                            minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+                        access_token = create_access_token(
+                            data={"sub": str(user_check['username'])+':'+str(user_check['status'])}, expires_delta=access_token_expires
+                        )
+                        return {'message': 'success', 'data': user_check, "access_token": access_token, "token_type": "bearer"}
+                        
     raise HTTPException(status_code=400, detail="未匹配到人脸信息")
 
 
@@ -159,7 +166,6 @@ def hash_password(password: str, salt: str = "lxh"):
     return user_hash.hexdigest()
 
 
-
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     r"""
     生成一个jwt密钥
@@ -170,7 +176,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     else:
         expire = datetime.utcnow() + timedelta(minutes=15)
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, FACE_SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
 

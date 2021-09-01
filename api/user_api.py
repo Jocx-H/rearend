@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import traceback
-from fastapi import APIRouter, Query, HTTPException, Path, File, UploadFile
+from fastapi import APIRouter, Query, Depends, Path, File, UploadFile
 from model.user import User
 from model.code import Code400
-from service import user_service, login_service
-from fastapi.encoders import jsonable_encoder
+from service import user_service
 from typing import Optional
 import asyncio
+from api.utils import check_current_admin_user, check_current_user
 
 # 构建api路由
 router = APIRouter(
@@ -17,7 +16,7 @@ router = APIRouter(
 )
 
 
-@router.post("/add_user", responses={400: {"model": Code400}})
+@router.post("/add_user", responses={400: {"model": Code400}}, dependencies=[Depends(check_current_admin_user)])
 async def add_user(user: User):
     r"""
     添加员工，员工的username必填
@@ -51,8 +50,7 @@ async def add_user(user: User):
     return await loop.run_in_executor(None, user_service.add_user, user)
     
 
-
-@router.post("/change-avatar/{username}", responses={400: {"model": Code400}})
+@router.post("/change-avatar/{username}", responses={400: {"model": Code400}}, dependencies=[Depends(check_current_user)])
 async def change_avatar(file: UploadFile = File(...),
                         username: str = Path(..., min_length=1, max_length=20)):
     r"""
@@ -61,7 +59,7 @@ async def change_avatar(file: UploadFile = File(...),
     return await user_service.change_avatar(file, username)
     
 
-@router.delete("/remove/{username}", responses={400: {"model": Code400}})
+@router.delete("/remove/{username}", responses={400: {"model": Code400}}, dependencies=[Depends(check_current_admin_user)])
 async def remove_user(username: str = Path(..., min_length=1, max_length=20)):
     r"""
     删除员工，以路径参数username唯一指定
@@ -70,8 +68,7 @@ async def remove_user(username: str = Path(..., min_length=1, max_length=20)):
     return await loop.run_in_executor(None, user_service.remove_user, username)
     
 
-
-@router.get("/get-all", responses={400: {"model": Code400}})
+@router.get("/get-all", responses={400: {"model": Code400}}, dependencies=[Depends(check_current_user)])
 async def get_all_users(limit: Optional[int] = Query(10),
                         skip: int = Query(0)):
     r"""
@@ -82,8 +79,7 @@ async def get_all_users(limit: Optional[int] = Query(10),
     return await loop.run_in_executor(None, user_service.get_user, None, limit, skip)
 
 
-
-@router.get("/search/{name}", responses={400: {"model": Code400}})
+@router.get("/search/{name}", responses={400: {"model": Code400}}, dependencies=[Depends(check_current_user)])
 async def search_user(name: str = Path(..., min_length=1, max_length=20)):
     r"""
     根据username或name搜索指定员工
@@ -96,7 +92,7 @@ async def search_user(name: str = Path(..., min_length=1, max_length=20)):
     return result1+result2
 
 
-@router.post("/get", responses={400: {"model": Code400}})
+@router.post("/get", responses={400: {"model": Code400}}, dependencies=[Depends(check_current_user)])
 async def get_user(where: User = None,
                    limit: Optional[int] = Query(None),
                    skip: int = Query(0)):
@@ -111,7 +107,7 @@ async def get_user(where: User = None,
         return await loop.run_in_executor(None, user_service.get_user, where.dict(), limit, skip)
 
 
-@router.put("/update/{username}", responses={400: {"model": Code400}})
+@router.put("/update/{username}", responses={400: {"model": Code400}}, dependencies=[Depends(check_current_admin_user)])
 async def update_user(user: User,
                       username: str = Path(..., min_length=1, max_length=20)):
     r"""
