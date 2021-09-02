@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from fastapi import APIRouter, Query, Depends, Path, File, UploadFile
+from fastapi import APIRouter, Query, Depends, Path, File, UploadFile, Body
 from model.user import User
 from model.code import Code400
 from service import user_service
@@ -109,13 +109,15 @@ async def get_user(where: User = None,
 
 @router.put("/update/{username}", responses={400: {"model": Code400}}, dependencies=[Depends(check_current_user)])
 async def update_user(user: User,
+                      notice_it: bool = Body(...),
                       username: str = Path(..., min_length=1, max_length=20)):
     r"""
     更新员工信息，以路径参数username唯一指定
     赋予了非管理员账号修改用户的权力（这里由于接口未区分开存在潜在的漏洞）
+    notice_it=true表示将通知被修改的用户
     """
     loop = asyncio.get_event_loop()
-    return await loop.run_in_executor(None, user_service.update_user, username, user)
+    return await loop.run_in_executor(None, user_service.update_user, username, user, notice_it)
     
 
 

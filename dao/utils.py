@@ -7,14 +7,14 @@ from pymysql.converters import escape_string
 from typing import Optional, Dict, Union
 import json
 
+# 读取本地数据库配置
+with open("config.json") as f:
+    db_configs = json.load(f)['database']
 
 def open_database(db="staff_home"):
     r"""
     打开数据库连接，并返回connection, cursor
     """
-    # 读取本地配置
-    with open("dao/config.json") as f:
-        db_configs = json.load(f)['database']
     # 打开数据库连接
     connection = pymysql.connect(**db_configs,
                                  db=db,

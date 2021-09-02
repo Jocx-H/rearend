@@ -7,8 +7,10 @@ from typing import Optional, Dict, Union, List
 from service.login_service import hash_password
 from fastapi import UploadFile
 import os
+import _thread
 from api.utils import exception_handler, async_exception_handler
 from fastapi.encoders import jsonable_encoder
+from service.email_service import send_email_to_everyone, send_email_by_username
 
 AVATAR_PATH = 'assets/public/avatar'
 AVATAR_URL = 'resources/avatar'
@@ -85,7 +87,7 @@ def remove_user(username: Optional[str]) -> str:
         return crud.delete_items('user_inf', where={'username': username})
 
 @exception_handler
-def update_user(username: Optional[str], user: User) -> str:
+def update_user(username: Optional[str], user: User, notice_it: bool) -> str:
     r"""
     更新员工的信息，以username为唯一指定目标
     """
@@ -95,8 +97,13 @@ def update_user(username: Optional[str], user: User) -> str:
     if 'password' in items.keys():
         items['password'] = hash_password(items['password'])
     if username is None:
+        if notice_it:
+            _thread.start_new_thread(send_email_to_everyone, ("你的员工信息被管理员修改了。",))
         return crud.update_items('user_inf', items, where=None)
     else:
+        if notice_it:
+            _thread.start_new_thread(
+                send_email_by_username, (username, "你的员工信息被管理员修改了。",))
         return crud.update_items('user_inf', items, where={'username': username})
 
 @exception_handler

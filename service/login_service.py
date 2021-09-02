@@ -15,16 +15,16 @@ import traceback
 from api.utils import exception_handler, async_exception_handler, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY
 from datetime import datetime, timedelta
 from jose import jwt
+import json
 
-FACE_PATH = "assets/private/face_img"
-TEMP_PATH = "assets/private/tmp"
-THRESHOLD = 70  # 人脸识别通过的阈值
+# 读取本地安全配置
+with open("config.json") as f:
+    db_configs = json.load(f)['safe']
 
-FACE_SECRET_KEY = {
-    "key": "iXWmKDAuviqmnDx9KcGcb5f26VXD8qro",
-    "secret": "aDChdAEjL4hY5AYfshQL1rW4DhUVzyWu"
-}  # 旷视api密钥
-
+FACE_PATH = db_configs['face_path']
+TEMP_PATH = db_configs['temp_path']
+THRESHOLD = db_configs['face_threshold']
+FACE_SECRET_KEY = db_configs['face_secret_key']
 
 # 人脸注册部分
 @async_exception_handler

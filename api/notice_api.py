@@ -20,12 +20,14 @@ router = APIRouter(
 async def add_notice(title: str = Body(..., min_length=1, max_length=50),
                      username: str = Body(..., min_length=1, max_length=20,
                      description="The username of notifier"),
+                     notice_it: bool = Body(...),
                      content: Optional[str] = Body(None, max_length=300)):
     r"""
-    添加公告，title, username必选，content可选
+    添加公告，title, username, notice_it必选，content可选
+    notice_it=true表示给每一位用户发送邮件通知
     """
     loop = asyncio.get_event_loop()
-    return await loop.run_in_executor(None, notice_service.add_notice, title, username, content)
+    return await loop.run_in_executor(None, notice_service.add_notice, title, username, notice_it, content)
 
 
 @router.delete("/remove-all", responses={400: {"model": Code400}}, dependencies=[Depends(check_current_admin_user)])

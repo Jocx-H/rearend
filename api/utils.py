@@ -4,10 +4,15 @@ from fastapi import Depends, HTTPException, status
 import traceback
 from fastapi import HTTPException
 from functools import wraps
+import json
 
-ALGORITHM = "HS256"  # jwt加密算法
-ACCESS_TOKEN_EXPIRE_MINUTES = 30  # token有效时间
-SECRET_KEY = "277b0e48a7355e18456742dfe401ac2a501713566b0d2da873e74d69cda2c692"
+# 读取本地安全配置
+with open("config.json") as f:
+    db_configs = json.load(f)['safe']
+
+SECRET_KEY = db_configs['secret_key']
+ALGORITHM = db_configs['jwt_algorithm']  # jwt加密算法
+ACCESS_TOKEN_EXPIRE_MINUTES = db_configs['access_token_expire_minutes']  # token有效时间
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/login/passwd")
 
 
