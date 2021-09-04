@@ -48,6 +48,7 @@ async def face_add(file: UploadFile, username: str):
         raise HTTPException(status_code=400, detail="所上传图片中检测不到人脸！")
     return {'code': 200, 'message': 'success'}
 
+
 def detect_face(img_path: str) -> bool:
     r"""
     检测注册的图片是否是人脸

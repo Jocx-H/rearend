@@ -23,7 +23,6 @@ app.add_middleware(
     allow_headers=["*"])
 
 
-
 # 注册api模块
 app.include_router(login_api.router, prefix='/api')
 app.include_router(job_api.router, prefix='/api')

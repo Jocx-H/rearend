@@ -16,46 +16,6 @@ class Sex(int, Enum):
     woman = 2
 
 
-# class UserAuthority(BaseModel):
-#     r"""
-#     鉴权时用的模型，修改密码，人脸验证等都要用到
-#     """
-#     # username: str = Field(..., min_length=1, max_length=20)
-#     password: str = Field(..., min_length=6, max_length=32)
-#     status: Status = Field(
-#         Status.normal_user,
-#         description="1 represent administrator and 2 represent normal user")
-#     face_url: Optional[HttpUrl] = Field(None)  # max_length=255
-#     # face_path: Optional[str] = Field(None, max_length=255)
-
-
-# class UserInfo(BaseModel):
-#     r"""
-#     更新用户信息时使用的模型
-#     """
-#     # username: str = Field(..., min_length=1, max_length=20)
-#     avatar_path: Optional[str] = Field(None, max_length=255)
-#     department: Optional[str] = Field(None, min_length=1, max_length=50)
-#     job: Optional[str] = Field(None, min_length=1, max_length=50)
-#     name: Optional[str] = Field(None, min_length=1, max_length=20)
-#     card_id: Optional[str] = Field(None, min_length=18, max_length=18)
-#     address: Optional[str] = Field(None, min_length=1, max_length=50)
-#     post_code: Optional[str] = Field(None, min_length=1, max_length=50)
-#     tel: Optional[str] = Field(None, min_length=1, max_length=16)
-#     phone: Optional[str] = Field(None, min_length=1, max_length=11)
-#     qq_num: Optional[str] = Field(None, min_length=1, max_length=10)
-#     email: Optional[EmailStr] = Field(None)  # min_length=1, max_length=50
-#     sex: Optional[Sex] = None
-#     party: Optional[str] = Field(None, min_length=1, max_length=10)
-#     birthday: Optional[datetime] = None
-#     nationality: Optional[str] = Field(None, min_length=1, max_length=100)
-#     education: Optional[str] = Field(None, min_length=1, max_length=10)
-#     speciality: Optional[str] = Field(None, min_length=1, max_length=10)
-#     hobby: Optional[str] = Field(None, min_length=1, max_length=100)
-#     remark: Optional[str] = Field(None, min_length=1, max_length=500)
-#     create_date: Optional[datetime] = None
-
-
 class User(BaseModel):
     r"""
     创建用户时使用的模型
@@ -63,7 +23,7 @@ class User(BaseModel):
     username: str = Field(None, min_length=1, max_length=20)
     password: str = Field(None, min_length=1, max_length=20)
     status: Status = Field(None,
-        description="1 represent administrator and 2 represent normal user")
+                           description="1 represent administrator and 2 represent normal user")
     name: Optional[str] = Field(None, min_length=1, max_length=20)
     sex: Optional[Sex] = None
     card_id: Optional[str] = Field(None, min_length=18, max_length=18)
@@ -71,11 +31,11 @@ class User(BaseModel):
     department: Optional[str] = Field(None, min_length=1, max_length=50)
     job: Optional[str] = Field(None, min_length=1, max_length=50)
     address: Optional[str] = Field(None, min_length=1, max_length=50)
-    post_code: Optional[str] = Field(None, min_length=1, max_length=50)
+    post_code: Optional[str] = Field(None, min_length=6, max_length=6)
     tel: Optional[str] = Field(None, min_length=1, max_length=16)
     phone: Optional[str] = Field(None, min_length=1, max_length=11)
-    qq_num: Optional[str] = Field(None, min_length=1, max_length=10)
-    email: Optional[EmailStr] = Field(None)  # min_length=1, max_length=50
+    qq_num: Optional[str] = Field(None, min_length=6, max_length=12)
+    email: Optional[EmailStr] = Field(None)
     party: Optional[str] = Field(None, min_length=1, max_length=10)
     birthday: Optional[date] = None
     nationality: Optional[str] = Field(None, min_length=1, max_length=100)

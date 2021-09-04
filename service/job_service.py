@@ -38,10 +38,10 @@ def get_job(name: Optional[str], limit: Optional[int], skip: int) -> List[Dict[s
                                  where=None, limit=limit, skip=skip)
     else:
         return crud.select_items('job_inf', columns=['name', 'remark'],
-                                where={'name': name}, limit=limit, skip=skip)
+                                 where={'name': name}, limit=limit, skip=skip)
 
 
-def update_job(name: Optional[str], job: Job) ->str:
+def update_job(name: Optional[str], job: Job) -> str:
     r"""
     更新职位的信息，以传入的name唯一指定，可选修改name和remark
     """

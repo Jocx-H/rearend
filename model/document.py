@@ -4,6 +4,7 @@ from typing import Optional
 from pydantic import BaseModel, Field
 from datetime import datetime
 
+
 class Document(BaseModel):
     r"""
     创建和更新下载文档使用的模型
@@ -12,4 +13,4 @@ class Document(BaseModel):
     remark: Optional[str] = Field(None, max_length=300)
     create_time: Optional[datetime] = None
     username: Optional[str] = Field(None, min_length=1, max_length=20,
-                          description="The username of uploader")
+                                    description="The username of uploader")
